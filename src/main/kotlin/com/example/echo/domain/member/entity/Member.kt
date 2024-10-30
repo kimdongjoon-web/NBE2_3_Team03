@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "member")
 @EntityListeners(AuditingEntityListener::class)
-data class Member (
+data class Member(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +56,7 @@ data class Member (
 
     fun getPayload(): Map<String, Any?> {
         return mapOf(
-            "memberId" to (memberId ?: 0),
+            "memberId" to memberId,
             "userId" to userId,
             "name" to name,
             "email" to email,
