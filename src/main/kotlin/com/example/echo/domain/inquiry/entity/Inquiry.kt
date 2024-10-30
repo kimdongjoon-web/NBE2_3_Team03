@@ -1,11 +1,14 @@
 package com.example.echo.domain.inquiry.entity
 
+import com.example.echo.domain.member.entity.Member
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "tbl_inquiry")
+@EntityListeners(AuditingEntityListener::class)
 data class Inquiry (
 
     @Id
@@ -13,9 +16,9 @@ data class Inquiry (
     @Column(name = "inquiry_id", nullable = false, unique = true)
     val inquiryId: Long,
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id", nullable = false)
-//    var member: Member,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    var member: Member,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "inquiry_category", nullable = false)
@@ -25,7 +28,7 @@ data class Inquiry (
     var inquiryTitle: String,
 
     @Column(name = "inquiry_content", length = 2000, nullable = false)
-    var inquiryContent: String? = null,
+    var inquiryContent: String = "",
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
@@ -41,4 +44,4 @@ data class Inquiry (
     @Column(name = "replied_date")
     var repliedDate: LocalDateTime? = null,
 
-)
+    )
