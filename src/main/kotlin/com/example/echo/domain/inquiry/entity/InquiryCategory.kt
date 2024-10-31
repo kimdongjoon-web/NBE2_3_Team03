@@ -6,3 +6,4 @@ enum class InquiryCategory (val description: String) {
     PETITION("청원"),
     OTHERS("기타")
 }
+
