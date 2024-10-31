@@ -42,7 +42,7 @@ class PetitionCrawlService(
         try {
             driver.get(url)
             crawlPetitionCardsFromAllPages(crawledData)
-            crawlDetailPagesAndSavePetitions(crawledData)
+            crawlDetailPagesAndSetContent(crawledData)
             savePetitionWithMember(crawledData, id)
         } catch (e: Exception) {
             log.error("An error occurred: ", e)
@@ -81,7 +81,7 @@ class PetitionCrawlService(
     }
 
     // 크롤링한 데이터의 상세 페이지를 방문하여 청원 내용을 추출한 뒤 삽입
-    private fun crawlDetailPagesAndSavePetitions(crawledData: MutableList<PetitionCrawlResponse>) {
+    private fun crawlDetailPagesAndSetContent(crawledData: MutableList<PetitionCrawlResponse>) {
         for (petitionResponse in crawledData) {
             try {
                 setContentFromDetailPage(petitionResponse)
