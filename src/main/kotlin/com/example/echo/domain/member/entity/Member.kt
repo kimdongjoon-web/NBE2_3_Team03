@@ -1,5 +1,6 @@
 package com.example.echo.domain.member.entity
 
+import com.example.echo.domain.inquiry.entity.Inquiry
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
