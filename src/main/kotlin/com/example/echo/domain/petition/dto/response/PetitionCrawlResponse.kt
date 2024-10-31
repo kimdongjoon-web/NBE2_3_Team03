@@ -1,4 +1,4 @@
-package com.example.echo.domain.petition.dto
+package com.example.echo.domain.petition.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
 

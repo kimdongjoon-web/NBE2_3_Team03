@@ -1,7 +1,7 @@
 package com.example.echo.domain.petition.service
 
 import com.example.echo.domain.member.repository.MemberRepository
-import com.example.echo.domain.petition.dto.PetitionCrawlResponse
+import com.example.echo.domain.petition.dto.response.PetitionCrawlResponse
 import com.example.echo.domain.petition.entity.Petition
 import com.example.echo.domain.petition.repository.PetitionRepository
 import com.example.echo.domain.petition.util.PetitionDataExtractor

@@ -1,6 +1,6 @@
 package com.example.echo.domain.petition.controller
 
-import com.example.echo.domain.petition.dto.PetitionCrawlResponse
+import com.example.echo.domain.petition.dto.response.PetitionCrawlResponse
 import com.example.echo.domain.petition.service.PetitionCrawlService
 import com.example.echo.global.api.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
