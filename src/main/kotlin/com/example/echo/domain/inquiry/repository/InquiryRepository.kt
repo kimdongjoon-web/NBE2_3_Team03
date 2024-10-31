@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.Query
 interface InquiryRepository : JpaRepository<Inquiry, Long?>, InquiryPaging {
 
     @Query("select i from Inquiry i join fetch i.member im")
-    fun findAllInquiriesAdmin(pageable: Pageable): Page<InquiryResponse>
+    fun findAllInquiriesAdmin(pageable: Pageable): Page<Inquiry>
 }
