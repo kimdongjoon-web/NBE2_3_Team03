@@ -6,13 +6,16 @@ data class ApiResponse<T>(
     val success: Boolean
 ) {
     companion object {
-        fun <T> success(data: T): ApiResponse<T> =
-            ApiResponse("요청이 성공적으로 처리되었습니다.", data, true)
+        fun <T> success(data: T): ApiResponse<T> {
+            return ApiResponse("요청이 성공적으로 처리되었습니다.", data, true)
+        }
 
-        fun<T> success(message: String, data: T): ApiResponse<T> =
-            ApiResponse(message, data, true)
+        fun <T> success(message: String, data: T): ApiResponse<T> {
+            return ApiResponse(message, data, true)
+        }
 
-        fun<T> error(message: String): ApiResponse<T> =
-            ApiResponse(message, null, false)
+        fun <T> error(message: String): ApiResponse<T> {
+            return ApiResponse(message, null, false)
+        }
     }
 }

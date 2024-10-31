@@ -77,9 +77,9 @@ class MemberController(
     fun deleteMember(
         @Parameter(description = "삭제할 회원의 ID", required = true)
         @PathVariable memberId: Long
-    ): ResponseEntity<ApiResponse<Nothing?>> {
+    ): ResponseEntity<ApiResponse<Unit>> {
         memberService.deleteMember(memberId)
-        return ResponseEntity.ok(ApiResponse.success(null))
+        return ResponseEntity.ok(ApiResponse.success(Unit))
     }
 
     // 비밀번호 변경

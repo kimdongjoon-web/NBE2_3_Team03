@@ -33,15 +33,17 @@ data class MemberCreateRequest(
     val avatarImage: String? = null,
 
     @field:Schema(description = "사용자 역할", example = "USER")
-    val role: Role = Role.USER
+    val role: Role
 ) {
-    fun toMember(): Member = Member(
-        userId = userId,
-        name = name,
-        email = email,
-        password = password,
-        phone = phone,
-        avatarImage = avatarImage ?: "/images/default-avatar.png",
-        role = role
-    )
+    fun toMember(): Member {
+        return Member(
+            userId = this.userId,
+            name = this.name,
+            email = this.email,
+            password = this.password,
+            phone = this.phone,
+            avatarImage = this.avatarImage ?: "/images/default-avatar.png", // 기본 아바타 이미지 설정
+            role = this.role
+        )
+    }
 }

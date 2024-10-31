@@ -64,15 +64,15 @@ class MemberService(
         val member = findMemberById(memberId)
 
         // 이메일 중복 확인 (이메일이 변경되었을 때만 확인)
-        memberRequest.email?.takeIf { it != member.email }?.let {
-            checkEmailDuplicate(it)
+        if (member.email != memberRequest.email) {
+            checkEmailDuplicate(memberRequest.email)
         }
 
         // 전화번호 중복 확인 (전화번호가 변경되었을 때만 확인)
-        memberRequest.phone?.takeIf { it != member.phone }?.let {
-            checkPhoneDuplicate(it)
+        if (member.phone != memberRequest.phone) {
+            checkPhoneDuplicate(memberRequest.phone)
         }
-
+        
         // 비밀번호 변경 시 추가 검증
         memberRequest.newPassword?.let { newPassword ->
             // 현재 비밀번호 확인
@@ -100,8 +100,8 @@ class MemberService(
     }
 
     // 프로필 사진 조회
-    fun getAvatar(memberId: Long): String {
-        return findMemberById(memberId).avatarImage ?: ""
+    fun getAvatar(memberId: Long): String? {
+        return findMemberById(memberId).avatarImage
     }
 
     // 프로필 사진 업데이트
@@ -147,14 +147,14 @@ class MemberService(
 
     // 이메일 중복 확인
     private fun checkEmailDuplicate(email: String) {
-        if (memberRepository.findByEmail(email) != null) {
+        if (memberRepository.findByEmail(email).isPresent) {
             throw MemberCustomException(ErrorCode.EMAIL_ALREADY_EXISTS)
         }
     }
 
     // 전화번호 중복 확인
     private fun checkPhoneDuplicate(phone: String) {
-        if (memberRepository.findByPhone(phone) != null) {
+        if (memberRepository.findByPhone(phone).isPresent) {
             throw MemberCustomException(ErrorCode.PHONE_ALREADY_EXISTS)
         }
     }

@@ -1,5 +1,7 @@
 package com.example.echo.domain.member.entity
 
+
+import com.example.echo.domain.inquiry.entity.Inquiry
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -39,28 +41,37 @@ data class Member(
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
-    val createdDate: LocalDateTime? = null,
+    val createdDate: LocalDateTime = LocalDateTime.now(),
+
 
     @ElementCollection
     @CollectionTable(name = "member_interests", joinColumns = [JoinColumn(name = "member_id")])
     @Column(name = "petition_id")
-    var interestList: MutableList<Long> = mutableListOf(),
+
+    val interestList: MutableList<Long> = mutableListOf(),
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL])
-    var inquiryList: MutableList<Inquiry> = mutableListOf()
+    val inquiryList: MutableList<Inquiry> = mutableListOf(),
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id", nullable = false, unique = true)
+    val memberId: Long? = null
 ) {
 
+    // 문의 추가 메서드
     fun addInquiry(inquiry: Inquiry) {
         inquiryList.add(inquiry)
     }
 
-    fun getPayload(): Map<String, Any?> {
+
+    fun getPayload(): Map<String, Any> {
         return mapOf(
-            "memberId" to memberId,
+            "memberId" to (memberId ?: 0L), // null인 경우 기본값 0L 제공
             "userId" to userId,
             "name" to name,
             "email" to email,
-            "role" to role
+            "role" to role.toString() // Enum을 문자열로 변환
         )
     }
 
@@ -76,5 +87,6 @@ data class Member(
                 "createdDate=$createdDate, " +
                 "interestListSize=${interestList.size}, " +
                 "inquiryListSize=${inquiryList.size})"
+
     }
 }
