@@ -2,8 +2,10 @@ package com.example.echo.global.exception
 
 import org.springframework.http.HttpStatus
 
-enum class ErrorCode(val httpStatus: HttpStatus, val message: String) {
-
+enum class ErrorCode(
+    val httpStatus: HttpStatus,
+    val message: String
+) {
     // Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원 정보를 찾을 수 없습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
@@ -18,5 +20,5 @@ enum class ErrorCode(val httpStatus: HttpStatus, val message: String) {
 
     // Inquiry
     INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "1:1 문의를 찾을 수 없습니다."),
-    INQUIRY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "1:1 문의에 대한 접근 권한이 없습니다.");
+    INQUIRY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "1:1 문의에 대한 접근 권한이 없습니다.")
 }
