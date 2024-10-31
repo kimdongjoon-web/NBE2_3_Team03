@@ -1,5 +1,6 @@
 package com.example.echo.domain.member.entity
 
+
 import com.example.echo.domain.inquiry.entity.Inquiry
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
@@ -36,9 +37,11 @@ class Member(
     @Column(name = "created_date", nullable = false, updatable = false)
     val createdDate: LocalDateTime = LocalDateTime.now(),
 
+
     @ElementCollection
     @CollectionTable(name = "member_interests", joinColumns = [JoinColumn(name = "member_id")])
     @Column(name = "petition_id")
+
     val interestList: MutableList<Long> = mutableListOf(),
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL])
@@ -55,6 +58,7 @@ class Member(
         inquiryList.add(inquiry)
     }
 
+
     fun getPayload(): Map<String, Any> {
         return mapOf(
             "memberId" to (memberId ?: 0L), // null인 경우 기본값 0L 제공
@@ -66,8 +70,17 @@ class Member(
     }
 
     override fun toString(): String {
-        return "Member(memberId=$memberId, userId='$userId', name='$name', email='$email', password='$password', " +
-                "phone='$phone', avatarImage=$avatarImage, role=$role, createdDate=$createdDate, " +
-                "interestListSize=${interestList.size}, inquiryListSize=${inquiryList.size})"
+        return "Member(memberId=$memberId, " +
+                "userId='$userId', " +
+                "name='$name', " +
+                "email='$email', " +
+                "password='$password', " +
+                "phone='$phone', " +
+                "avatarImage='$avatarImage', " +
+                "role=$role, " +
+                "createdDate=$createdDate, " +
+                "interestListSize=${interestList.size}, " +
+                "inquiryListSize=${inquiryList.size})"
+
     }
 }
