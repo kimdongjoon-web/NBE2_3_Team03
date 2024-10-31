@@ -44,4 +44,18 @@ data class Inquiry (
     @Column(name = "replied_date")
     var repliedDate: LocalDateTime? = null,
 
-    )
+    ) {
+
+    fun changeReplyContent(replyContent: String?) {
+        this.replyContent = replyContent
+        this.inquiryStatus = InquiryStatus.RESOLVED
+        this.repliedDate = LocalDateTime.now()
+    }
+
+    override fun toString(): String {
+        return "Inquiry(inquiryId=$inquiryId, member=${member.memberId}, inquiryCategory=$inquiryCategory," +
+                "inquiryTitle=$inquiryTitle, inquiryContent=$inquiryContent,createdDate=$createdDate," +
+                "replyContent=$replyContent, inquiryStatus=$inquiryStatus, repliedDate=$repliedDate)"
+    }
+
+}
