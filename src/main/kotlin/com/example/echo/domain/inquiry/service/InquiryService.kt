@@ -7,6 +7,9 @@ import com.example.echo.domain.inquiry.dto.response.InquiryResponse
 import com.example.echo.domain.inquiry.entity.Inquiry
 import com.example.echo.domain.inquiry.repository.InquiryRepository
 import com.example.echo.domain.member.entity.Role
+import com.example.echo.domain.member.service.MemberService
+import com.example.echo.global.exception.ErrorCode
+import com.example.echo.global.exception.PetitionCustomException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -27,7 +30,7 @@ class InquiryService(
     }
 
     fun getInquiryById(inquiryId: Long, memberId: Long): InquiryResponse {
-        val foundMember = memberService.findMemberById(memberId);
+        val foundMember = memberService.findMemberById(memberId)
         val foundInquiry = findInquiryById(inquiryId)
 
         if (foundMember.role == Role.USER) {
@@ -56,11 +59,11 @@ class InquiryService(
 
     // ADMIN/USER 본인 1:1 문의 삭제
     @Transactional
-    fun deleteInquiry(inquiryId: Long?, memberId: Long?) {
+    fun deleteInquiry(inquiryId: Long?, memberId: Long) {
         val foundMember = memberService.getMember(memberId)
         val foundInquiry = findInquiryById(inquiryId!!)
         if (foundMember.role == Role.USER) {
-            validateUserInquiryAccess(memberId!!, foundInquiry)
+            validateUserInquiryAccess(memberId, foundInquiry)
         }
         inquiryRepository.delete(foundInquiry)
     }
@@ -82,12 +85,14 @@ class InquiryService(
 
     // ADMIN 모든 문의 조회
     private fun findAllForAdmin(pageable: Pageable): Page<InquiryResponse> {
-        return inquiryRepository.findAllInquiriesAdmin(pageable)
+        val inquiriesPage: Page<Inquiry> = inquiryRepository.findAllInquiriesAdmin(pageable)
+        return inquiriesPage.map{ InquiryResponse.from(it)}
     }
 
     // USER 본인 문의 조회
     private fun findAllForUser(memberId: Long, pageable: Pageable): Page<InquiryResponse> {
-        return inquiryRepository.findAllInquiriesUser(memberId, pageable)
+        val inquiriesPage: Page<Inquiry> = inquiryRepository.findAllInquiriesUser(memberId, pageable)
+        return inquiriesPage.map{ InquiryResponse.from(it)}
     }
 
     // USER인 경우 해당 문의 작성자 본인 검증
