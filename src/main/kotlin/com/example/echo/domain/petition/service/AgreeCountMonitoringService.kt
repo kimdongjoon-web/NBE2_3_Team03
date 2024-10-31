@@ -13,7 +13,7 @@ class AgreeCountMonitoringService(
     private val petitionCrawlService: PetitionCrawlService
 ) {
     @Transactional
-    @Scheduled(fixedRate = 600000L)
+//    @Scheduled(fixedRate = 600000L)   // 데이터가 삽입되기 이전엔 주석 처리
     fun updateAgreeCountFromWeb() {
         val petitions = petitionRepository.findAllActive()
 

@@ -36,9 +36,7 @@ class PetitionCrawlController(
     @PostMapping("/petitioncrawl/{id}")
     fun crawlAndSaveAllPetitions(
         @Parameter(description = "크롤링할 관리자 회원의 ID") @PathVariable id: Long
-    ): ResponseEntity<ApiResponse<List<PetitionCrawlResponse>>> {
-        val url = "https://petitions.assembly.go.kr/proceed/onGoingAll"
-        val crawledData = petitionCrawlService.dynamicCrawl(id, url)
-        return ResponseEntity.ok(ApiResponse.success(crawledData))
-    }
+    ): ResponseEntity<ApiResponse<List<PetitionCrawlResponse>>> =
+        petitionCrawlService.dynamicCrawl(id, "https://petitions.assembly.go.kr/proceed/onGoingAll")
+            .let { ResponseEntity.ok(ApiResponse.success(it)) }
 }

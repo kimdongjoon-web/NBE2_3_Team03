@@ -101,7 +101,7 @@ class MemberController(
     fun getAvatar(
         @Parameter(description = "조회할 회원의 ID", required = true)
         @PathVariable memberId: Long
-    ): ResponseEntity<ApiResponse<String>> =
+    ): ResponseEntity<ApiResponse<String?>> =
         ResponseEntity.ok(ApiResponse.success(memberService.getAvatar(memberId)))
 
     // 프로필 이미지 업로드
