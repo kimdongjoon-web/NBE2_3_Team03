@@ -6,10 +6,13 @@ import com.example.echo.domain.inquiry.dto.request.InquiryPageRequest
 import com.example.echo.domain.inquiry.dto.request.InquiryUpdateRequest
 import com.example.echo.domain.inquiry.dto.response.InquiryResponse
 import com.example.echo.domain.inquiry.service.InquiryService
+import com.example.echo.global.api.ApiResponse
+import com.example.echo.global.security.auth.CustomUserPrincipal
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -84,7 +87,7 @@ class InquiryController(
         @PathVariable inquiryId: Long,
         @Parameter(description = "현재 인증된 사용자 정보", required = true)
         @AuthenticationPrincipal principal: CustomUserPrincipal
-    ): ResponseEntity<ApiResponse<Void>> {
+    ): ResponseEntity<ApiResponse<Void?>> {
         inquiryService.deleteInquiry(inquiryId, principal.memberId)
         return ResponseEntity.ok(ApiResponse.success(null))
     }
@@ -97,7 +100,7 @@ class InquiryController(
         @PathVariable inquiryId: Long,
         @Parameter(description = "답변 등록 요청 데이터", required = true)
         @Valid @RequestBody inquiryRequest: AdminAnswerRequest
-    ): ResponseEntity<ApiResponse<InquiryResponse>> {
+    ): ResponseEntity<ApiResponse<InquiryResponse?>> {
         inquiryService.addAnswer(inquiryId, inquiryRequest.replyContent)
         return ResponseEntity.ok(ApiResponse.success(null))
     }
