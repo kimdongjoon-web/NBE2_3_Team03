@@ -15,17 +15,17 @@ import org.springframework.data.repository.query.Param
 class InquiryPagingImpl :
     QuerydslRepositorySupport(Inquiry::class.java), InquiryPaging {
 
-    override fun findAllInquiriesUser(@Param("memberId")memberId: Long, pageable: Pageable): Page<InquiryResponse> {
+    override fun findAllInquiriesUser(@Param("memberId")memberId: Long, pageable: Pageable): Page<Inquiry> {
 
         val inquiry = QInquiry.inquiry;
         val member = QMember.member
 
-        val query: JPQLQuery<InquiryResponse> = from(inquiry)
+        val query: JPQLQuery<Inquiry> = from(inquiry)
             .leftJoin(inquiry.member, member)
             .where(member.memberId.eq(memberId))
             .select(
                 Projections.bean(
-                    InquiryResponse::class.java,
+                    Inquiry::class.java,
                     inquiry.inquiryId,
                     member.memberId.`as`("memberId"),
                     inquiry.inquiryCategory,
