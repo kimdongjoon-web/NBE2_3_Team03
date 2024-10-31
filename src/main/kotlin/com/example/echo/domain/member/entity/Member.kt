@@ -52,11 +52,6 @@ data class Member(
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL])
     val inquiryList: MutableList<Inquiry> = mutableListOf(),
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", nullable = false, unique = true)
-    val memberId: Long? = null
 ) {
 
     // 문의 추가 메서드

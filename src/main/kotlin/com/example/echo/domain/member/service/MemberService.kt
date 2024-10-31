@@ -8,7 +8,7 @@ import com.example.echo.domain.member.dto.response.MemberResponse
 import com.example.echo.domain.member.entity.Member
 import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.global.exception.ErrorCode
-import com.example.echo.global.exception.MemberCustomException
+import com.example.echo.global.exception.PetitionCustomException
 import com.example.echo.global.security.util.JWTUtil
 import com.example.echo.global.util.UploadUtil
 import org.modelmapper.ModelMapper
@@ -37,8 +37,8 @@ class MemberService(
     fun createMember(memberRequest: MemberCreateRequest): MemberResponse {
 
         checkUserIdDuplicate(memberRequest.userId)
-        memberRequest.email?.let { checkEmailDuplicate(it) }
-        memberRequest.phone?.let { checkPhoneDuplicate(it) }
+        checkEmailDuplicate(memberRequest.email)
+        checkPhoneDuplicate(memberRequest.phone)
 
         val member = memberRequest.toMember().apply {
             password = passwordEncoder.encode(password)
@@ -72,20 +72,20 @@ class MemberService(
         if (member.phone != memberRequest.phone) {
             checkPhoneDuplicate(memberRequest.phone)
         }
-        
+
         // 비밀번호 변경 시 추가 검증
         memberRequest.newPassword?.let { newPassword ->
             // 현재 비밀번호 확인
             memberRequest.currentPassword?.let { currentPassword ->
                 if (!passwordEncoder.matches(currentPassword, member.password)) {
-                    throw MemberCustomException(ErrorCode.INVALID_OLD_PASSWORD)
+                    throw PetitionCustomException(ErrorCode.INVALID_OLD_PASSWORD)
                 }
                 // 새 비밀번호가 현재 비밀번호와 같은지 확인
                 if (passwordEncoder.matches(newPassword, member.password)) {
-                    throw MemberCustomException(ErrorCode.SAME_AS_OLD_PASSWORD)
+                    throw PetitionCustomException(ErrorCode.SAME_AS_OLD_PASSWORD)
                 }
                 member.password = passwordEncoder.encode(newPassword)
-            } ?: throw MemberCustomException(ErrorCode.INVALID_PASSWORD)
+            } ?: throw PetitionCustomException(ErrorCode.INVALID_PASSWORD)
         }
 
         // MemberUpdateRequest 사용하여 업데이트
@@ -129,40 +129,40 @@ class MemberService(
     // userId로 회원 조회
     private fun findMemberByUserId(userId: String): Member {
         return memberRepository.findByUserId(userId)
-            ?: throw MemberCustomException(ErrorCode.MEMBER_NOT_FOUND)
+            ?: throw PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND)
     }
 
     // memberId로 회원 조회
     fun findMemberById(memberId: Long): Member {
         return memberRepository.findById(memberId)
-            .orElseThrow { MemberCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+            .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
     }
 
     // userId 중복 확인
     private fun checkUserIdDuplicate(userId: String) {
         if (memberRepository.findByUserId(userId) != null) {
-            throw MemberCustomException(ErrorCode.USERID_ALREADY_EXISTS)
+            throw PetitionCustomException(ErrorCode.USERID_ALREADY_EXISTS)
         }
     }
 
     // 이메일 중복 확인
     private fun checkEmailDuplicate(email: String) {
-        if (memberRepository.findByEmail(email).isPresent) {
-            throw MemberCustomException(ErrorCode.EMAIL_ALREADY_EXISTS)
+        memberRepository.findByEmail(email)?.let {
+            throw PetitionCustomException(ErrorCode.EMAIL_ALREADY_EXISTS)
         }
     }
 
     // 전화번호 중복 확인
     private fun checkPhoneDuplicate(phone: String) {
-        if (memberRepository.findByPhone(phone).isPresent) {
-            throw MemberCustomException(ErrorCode.PHONE_ALREADY_EXISTS)
+        memberRepository.findByPhone(phone)?.let {
+            throw PetitionCustomException(ErrorCode.PHONE_ALREADY_EXISTS)
         }
     }
 
     // 비밀번호 검증
     private fun validatePassword(rawPassword: String, encodedPassword: String) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw MemberCustomException(ErrorCode.INVALID_PASSWORD)
+            throw PetitionCustomException(ErrorCode.INVALID_PASSWORD)
         }
     }
 
