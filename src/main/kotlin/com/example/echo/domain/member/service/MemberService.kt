@@ -8,9 +8,10 @@ import com.example.echo.domain.member.dto.response.MemberResponse
 import com.example.echo.domain.member.entity.Member
 import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.global.exception.ErrorCode
-import com.example.echo.global.exception.PetitionCustomException
+import com.example.echo.global.exception.MemberCustomException
 import com.example.echo.global.security.util.JWTUtil
 import com.example.echo.global.util.UploadUtil
+import org.modelmapper.ModelMapper
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -21,9 +22,9 @@ class MemberService(
     private val passwordEncoder: PasswordEncoder,
     private val memberRepository: MemberRepository,
     private val uploadUtil: UploadUtil,
-    private val jwtUtil: JWTUtil
+    private val jwtUtil: JWTUtil,
+    private val modelMapper: ModelMapper
 ) {
-
     // 회원 로그인
     fun login(memberRequest: MemberLoginRequest): Map<String, String> {
         val member = findMemberByUserId(memberRequest.userId)
@@ -34,21 +35,27 @@ class MemberService(
     // 회원 등록
     @Transactional
     fun createMember(memberRequest: MemberCreateRequest): MemberResponse {
+
+        checkUserIdDuplicate(memberRequest.userId)
+        memberRequest.email?.let { checkEmailDuplicate(it) }
+        memberRequest.phone?.let { checkPhoneDuplicate(it) }
+
         val member = memberRequest.toMember().apply {
-            password = passwordEncoder.encode(password) // password 암호화
+            password = passwordEncoder.encode(password)
         }
-        val savedMember = memberRepository.save(member)
-        return MemberResponse.from(savedMember)
+        return modelMapper.map(memberRepository.save(member), MemberResponse::class.java)
     }
 
     // 회원 조회
     fun getMember(memberId: Long): MemberResponse {
-        return MemberResponse.from(findMemberById(memberId))
+        val member = findMemberById(memberId)
+        return modelMapper.map(member, MemberResponse::class.java)
     }
 
     // 전체 회원 조회
     fun getAllMembers(): List<MemberResponse> {
-        return memberRepository.findAll().map { MemberResponse.from(it) }
+        return memberRepository.findAll()
+            .map { modelMapper.map(it, MemberResponse::class.java) }
     }
 
     // 회원 정보 수정
@@ -65,11 +72,25 @@ class MemberService(
         if (member.phone != memberRequest.phone) {
             checkPhoneDuplicate(memberRequest.phone)
         }
+        
+        // 비밀번호 변경 시 추가 검증
+        memberRequest.newPassword?.let { newPassword ->
+            // 현재 비밀번호 확인
+            memberRequest.currentPassword?.let { currentPassword ->
+                if (!passwordEncoder.matches(currentPassword, member.password)) {
+                    throw MemberCustomException(ErrorCode.INVALID_OLD_PASSWORD)
+                }
+                // 새 비밀번호가 현재 비밀번호와 같은지 확인
+                if (passwordEncoder.matches(newPassword, member.password)) {
+                    throw MemberCustomException(ErrorCode.SAME_AS_OLD_PASSWORD)
+                }
+                member.password = passwordEncoder.encode(newPassword)
+            } ?: throw MemberCustomException(ErrorCode.INVALID_PASSWORD)
+        }
 
-        // MemberUpdateRequest를 사용하여 업데이트
+        // MemberUpdateRequest 사용하여 업데이트
         memberRequest.updateMember(member)
-
-        return MemberResponse.from(memberRepository.save(member)) // 수정된 회원 정보 저장
+        return modelMapper.map(memberRepository.save(member), MemberResponse::class.java)
     }
 
     // 회원 삭제
@@ -86,62 +107,73 @@ class MemberService(
     // 프로필 사진 업데이트
     @Transactional
     fun updateAvatar(id: Long, requestDto: ProfileImageUpdateRequest): MemberResponse {
-        val member = findMemberById(id)
-        val avatarUrl = uploadUtil.upload(requestDto.avatarImage)
-        member.avatarImage = avatarUrl
-        memberRepository.save(member)
-
-        return MemberResponse.from(member) // MemberResponse로 반환
-    }
-
-    // userID로 회원 조회
-    private fun findMemberByUserId(userId: String): Member {
-        return memberRepository.findByUserId(userId)
-            .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
-    }
-
-    // password 검증
-    private fun validatePassword(rawPassword: String, encodedPassword: String) {
-        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND)
+        val member = findMemberById(id).apply {
+            avatarImage = uploadUtil.upload(requestDto.avatarImage)
         }
-    }
-
-    // 공통 메서드: 회원 ID로 회원 조회
-    private fun findMemberById(memberId: Long): Member {
-        return memberRepository.findById(memberId)
-            .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
-    }
-
-    // JWT 토큰 생성
-    private fun makeToken(member: Member): Map<String, String> {
-        val payloadMap = member.getPayload()
-        val accessToken = jwtUtil.createToken(payloadMap, 60) // 60분 유효
-        val refreshToken = jwtUtil.createToken(mapOf("userId" to member.userId), 60 * 24 * 7) // 7일 유효
-        return mapOf(
-            "accessToken" to accessToken,
-            "refreshToken" to refreshToken
-        )
-    }
-
-    // 이메일 중복 확인
-    private fun checkEmailDuplicate(email: String) {
-        if (memberRepository.findByEmail(email).isPresent) {
-            throw PetitionCustomException(ErrorCode.EMAIL_ALREADY_EXISTS)
-        }
-    }
-
-    // 전화번호 중복 확인
-    private fun checkPhoneDuplicate(phone: String) {
-        if (memberRepository.findByPhone(phone).isPresent) {
-            throw PetitionCustomException(ErrorCode.PHONE_ALREADY_EXISTS)
-        }
+        return modelMapper.map(memberRepository.save(member), MemberResponse::class.java)
     }
 
     // 보호된 데이터 요청 시 사용자 정보 조회
     fun getMemberInfo(authentication: Authentication): MemberResponse {
         val userId = authentication.name // 인증된 사용자 ID 가져오기
         val member = findMemberByUserId(userId) // 사용자 정보를 DB에서 조회
-        return MemberResponse.from(member) // MemberResponse로 변환하여 반환
+        return modelMapper.map(member, MemberResponse::class.java) // MemberResponse로 변환하여 반환
+    }
+
+    /**
+     * ===========================================================================
+     * Helper Methods
+     * ===========================================================================
+     */
+
+    // userId로 회원 조회
+    private fun findMemberByUserId(userId: String): Member {
+        return memberRepository.findByUserId(userId)
+            ?: throw MemberCustomException(ErrorCode.MEMBER_NOT_FOUND)
+    }
+
+    // memberId로 회원 조회
+    fun findMemberById(memberId: Long): Member {
+        return memberRepository.findById(memberId)
+            .orElseThrow { MemberCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+    }
+
+    // userId 중복 확인
+    private fun checkUserIdDuplicate(userId: String) {
+        if (memberRepository.findByUserId(userId) != null) {
+            throw MemberCustomException(ErrorCode.USERID_ALREADY_EXISTS)
+        }
+    }
+
+    // 이메일 중복 확인
+    private fun checkEmailDuplicate(email: String) {
+        if (memberRepository.findByEmail(email).isPresent) {
+            throw MemberCustomException(ErrorCode.EMAIL_ALREADY_EXISTS)
+        }
+    }
+
+    // 전화번호 중복 확인
+    private fun checkPhoneDuplicate(phone: String) {
+        if (memberRepository.findByPhone(phone).isPresent) {
+            throw MemberCustomException(ErrorCode.PHONE_ALREADY_EXISTS)
+        }
+    }
+
+    // 비밀번호 검증
+    private fun validatePassword(rawPassword: String, encodedPassword: String) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw MemberCustomException(ErrorCode.INVALID_PASSWORD)
+        }
+    }
+
+    // JWT 토큰 생성
+    private fun makeToken(member: Member): Map<String, String> {
+        val accessToken = jwtUtil.createToken(member.getPayload(), 60) // 60분 유효
+        val refreshToken = jwtUtil.createToken(mapOf("userId" to member.userId), 60 * 24 * 7) // 7일 유효
+
+        return mapOf(
+            "accessToken" to accessToken,
+            "refreshToken" to refreshToken
+        )
     }
 }

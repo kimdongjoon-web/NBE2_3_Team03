@@ -1,8 +1,10 @@
 package com.example.echo.global.util
 
-import com.example.echo.global.exception.UploadException
+import com.example.echo.global.exception.ErrorCode
+import com.example.echo.global.exception.UploadCustomException
 import jakarta.annotation.PostConstruct
 import net.coobird.thumbnailator.Thumbnails
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
@@ -15,8 +17,10 @@ import java.util.*
 @Component
 class UploadUtil {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @Value("\${com.example.upload.path}")
-    lateinit var uploadPath: String
+    private lateinit var uploadPath: String
 
     @PostConstruct
     fun init() {
@@ -24,51 +28,42 @@ class UploadUtil {
 
         // 업로드 디렉토리가 없으면 생성
         if (!tempDir.exists() && !tempDir.mkdirs()) {
-            throw RuntimeException("업로드 디렉토리 생성 실패: $uploadPath")
+            throw UploadCustomException(ErrorCode.FILE_UPLOAD_FAILED)
         }
 
         // 업로드 경로가 디렉토리인지 확인
         if (!tempDir.isDirectory) {
-            throw RuntimeException("업로드 경로가 유효하지 않습니다: $uploadPath")
+            throw UploadCustomException(ErrorCode.INVALID_UPLOAD_PATH)
         }
-
         uploadPath = tempDir.absolutePath
-        println("--- uploadPath : $uploadPath") // log.info 대신 println 사용
+        logger.info("--- uploadPath : $uploadPath")
     }
 
     fun upload(file: MultipartFile): String {
-        // 파일 타입 확인
-        if (file.isEmpty || !isImageFile(file)) {
-            throw UploadException("업로드할 파일은 이미지 파일이어야 합니다.")
-        }
+
+        validateImageFile(file)
 
         val fileName = "${System.currentTimeMillis()}_${file.originalFilename}"
         val destinationFile = File(uploadPath, fileName)
 
         try {
-            file.transferTo(destinationFile) // 파일 저장
+            file.transferTo(destinationFile)
         } catch (e: IOException) {
-            throw UploadException("파일 업로드에 실패했습니다.", e)
+            logger.error("파일 업로드 실패: ${e.message}")
+            throw UploadCustomException(ErrorCode.FILE_UPLOAD_FAILED)
         }
 
-        return destinationFile.path // 저장된 파일의 경로 반환
+        return destinationFile.path
     }
 
-    // 여러 파일 업로드
     fun upload(files: Array<MultipartFile>): List<String> {
-        val filenames = mutableListOf<String>()
+        return files.map { file ->
+            logger.info("------------------")
+            logger.info("name : ${file.name}")
+            logger.info("origin name : ${file.originalFilename}")
+            logger.info("type : ${file.contentType}")
 
-        for (file in files) {
-            println("------------------")
-            println("name : ${file.name}")
-            println("origin name : ${file.originalFilename}")
-            println("type : ${file.contentType}")
-
-            // 파일 타입 확인
-            if (!isImageFile(file)) {
-                println("--- 지원하지 않는 파일 타입 : ${file.originalFilename}")
-                throw UploadException("모든 파일은 이미지 파일이어야 합니다: ${file.originalFilename}")
-            }
+            validateImageFile(file)
 
             val uuid = UUID.randomUUID().toString()
             val saveFilename = "${uuid}_${file.originalFilename}"
@@ -76,63 +71,66 @@ class UploadUtil {
 
             try {
                 saveFile(file, savePath)
-                createThumbnail(savePath, uuid)
-                filenames.add(saveFilename)
+                createThumbnail(savePath)
+                saveFilename // 저장된 파일명 반환
             } catch (e: IOException) {
-                println("파일 업로드 중 오류 발생: ${e.message}")
-                throw UploadException("파일 업로드 중 오류가 발생했습니다: ${file.originalFilename}", e)
+                logger.error("파일 업로드 실패: ${e.message}")
+                throw UploadCustomException(ErrorCode.FILE_UPLOAD_FAILED)
             }
         }
-        return filenames
     }
 
     private fun saveFile(file: MultipartFile, savePath: Path) {
-        file.transferTo(savePath.toFile())
-    }
-
-    // 이미지 파일인지 확인하는 메서드
-    private fun isImageFile(file: MultipartFile): Boolean {
-        val contentType = file.contentType
-        return contentType != null && contentType.startsWith("image/")
-    }
-
-    // 썸네일 파일 생성
-    private fun createThumbnail(savePath: Path, uuid: String) {
         try {
-            val originalFilename = savePath.fileName.toString()
-            val thumbnailFilename = "s_$originalFilename"
-
-            // 썸네일 파일 생성
-            Thumbnails.of(File(savePath.toString()))
-                .size(150, 150)
-                .toFile(File(uploadPath, thumbnailFilename))
-
-            println("썸네일 생성 성공: $thumbnailFilename") // log.info 대신 println 사용
+            file.transferTo(savePath.toFile()) // 실제 파일 저장 수행
         } catch (e: IOException) {
-            println("썸네일 생성 중 오류 발생: ${e.message}")
+            logger.error("파일 저장 실패: ${e.message}")
+            throw UploadCustomException(ErrorCode.FILE_UPLOAD_FAILED)
         }
     }
 
-    // 업로드 파일 삭제
+    private fun validateImageFile(file: MultipartFile) {
+        if (file.isEmpty || !isImageFile(file)) {
+            throw UploadCustomException(ErrorCode.INVALID_FILE_FORMAT)
+        }
+    }
+
+    private fun isImageFile(file: MultipartFile): Boolean {
+        return file.contentType?.startsWith("image/") ?: false
+    }
+
+    private fun createThumbnail(savePath: Path) {
+        try {
+            val thumbnailFilename = "s_${savePath.fileName}"
+            // 썸네일 파일 생성
+            Thumbnails.of(savePath.toFile())
+                .size(150, 150)
+                .toFile(File(uploadPath, thumbnailFilename))
+            logger.info("썸네일 생성 완료: $thumbnailFilename")
+        } catch (e: IOException) {
+            logger.error("썸네일 생성 실패: ${e.message}")
+            throw UploadCustomException(ErrorCode.THUMBNAIL_CREATION_FAILED)
+        }
+    }
+
     fun deleteFile(filename: String) {
         val file = File(uploadPath, filename)
-        val thumbFilename = "s_$filename" // 썸네일 파일 이름 생성
-        val thumbFile = File(uploadPath, thumbFilename)
+        val thumbFile = File(uploadPath, "s_$filename") // 썸네일 파일 이름 생성
 
         try {
-            if (file.exists() && file.delete()) {
-                println("파일 삭제 성공: $filename") // log.info 대신 println 사용
-            } else {
-                println("삭제할 파일이 존재하지 않음: $filename") // log.warn 대신 println 사용
-            }
-
-            if (thumbFile.exists() && thumbFile.delete()) {
-                println("썸네일 삭제 성공: $thumbFilename") // log.info 대신 println 사용
-            } else {
-                println("삭제할 썸네일 파일이 존재하지 않음: $thumbFilename") // log.warn 대신 println 사용
-            }
+            deleteIfExists(file, "파일")
+            deleteIfExists(thumbFile, "썸네일")
         } catch (e: Exception) {
-            println("파일 삭제 중 오류 발생: ${e.message}") // log.error 대신 println 사용
+            logger.error("파일 삭제 실패: ${e.message}")
+            throw UploadCustomException(ErrorCode.FILE_DELETE_FAILED)
+        }
+    }
+
+    private fun deleteIfExists(file: File, fileType: String) {
+        if (file.exists() && file.delete()) {
+            logger.info("$fileType 삭제 완료: ${file.name}")
+        } else {
+            logger.warn("$fileType 존재하지 않음: ${file.name}")
         }
     }
 }
