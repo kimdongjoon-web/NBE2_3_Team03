@@ -7,25 +7,34 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
 @Entity
+@Table(name = "member")
 @EntityListeners(AuditingEntityListener::class)
 class Member(
+    @Column(name = "user_id", nullable = false, unique = true)
     var userId: String,
 
+    @Column(name = "name", nullable = false)
     var name: String,
 
+    @Column(name = "email", nullable = false, unique = true)
     var email: String,
 
+    @Column(name = "password", nullable = false)
     var password: String,
 
+    @Column(name = "phone", nullable = false, length = 20)
     var phone: String,
 
+    @Column(name = "avatar_image")
     var avatarImage: String? = null,
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     var role: Role,
 
     @CreatedDate
-    val createdDate: LocalDateTime = LocalDateTime.now(), // 기본값으로 현재 시간 설정
+    @Column(name = "created_date", nullable = false, updatable = false)
+    val createdDate: LocalDateTime = LocalDateTime.now(),
 
     @ElementCollection
     @CollectionTable(name = "member_interests", joinColumns = [JoinColumn(name = "member_id")])
@@ -37,12 +46,9 @@ class Member(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id", nullable = false, unique = true)
     val memberId: Long? = null
 ) {
-    init {
-        require(userId.isNotBlank()) { "유저 아이디는 비어 있을 수 없습니다" }
-        require(name.isNotBlank()) { "이름은 비어 있을 수 없습니다" }
-    }
 
     // 문의 추가 메서드
     fun addInquiry(inquiry: Inquiry) {

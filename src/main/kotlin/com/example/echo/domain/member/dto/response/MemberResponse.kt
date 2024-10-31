@@ -21,7 +21,7 @@ data class MemberResponse(
     val phone: String,
 
     @Schema(description = "회원 프로필 이미지 URL", example = "/images/default-avatar.png")
-    val avatarImage: String? = null,  // 기본값으로 null 설정
+    val avatarImage: String? = null,
 
     @Schema(description = "회원 역할", example = "USER")
     val role: Role
