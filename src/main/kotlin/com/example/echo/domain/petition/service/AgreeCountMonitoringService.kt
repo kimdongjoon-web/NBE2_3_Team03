@@ -13,7 +13,7 @@ class AgreeCountMonitoringService(
     private val petitionCrawlService: PetitionCrawlService
 ) {
     @Transactional
-//    @Scheduled(fixedRate = 600000L)   // 데이터가 삽입되기 이전엔 주석 처리
+    @Scheduled(fixedRate = 86400000L)   // 스케줄링 주기 하루로 설정
     fun updateAgreeCountFromWeb() {
         val petitions = petitionRepository.findAllActive()
 
