@@ -1,5 +1,6 @@
 package com.example.echo.domain.petition.repository
 
+
 import com.example.echo.domain.petition.entity.Petition
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
