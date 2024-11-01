@@ -12,8 +12,6 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.redis.connection.ReactiveStreamCommands.AddStreamRecord.body
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -32,7 +30,7 @@ class PetitionController (
     fun createPetition(
         @Parameter(description = "청원 등록 요청 정보", required = true) @RequestBody petitionDto: PetitionRequestDto
     ): ResponseEntity<ApiResponse<PetitionDetailResponseDto>> {
-        val createdPetition = petitionService!!.createPetition(petitionDto)
+        val createdPetition = petitionService.createPetition(petitionDto)
         return ResponseEntity.ok(ApiResponse.success(createdPetition))
     }
 
@@ -42,7 +40,7 @@ class PetitionController (
     fun getPetitionById(
         @Parameter(description = "조회할 청원의 ID", required = true) @PathVariable petitionId: Long
     ): ResponseEntity<ApiResponse<PetitionDetailResponseDto>> {
-        val petition = petitionService!!.getPetitionById(petitionId)
+        val petition = petitionService.getPetitionById(petitionId)
         return ResponseEntity.ok(ApiResponse.success(petition))
     }
 
@@ -52,7 +50,7 @@ class PetitionController (
     fun getPetitions(
         @Parameter(description = "청원 조회 페이징 요청 정보", required = true) pageable: Pageable
     ): ResponseEntity<ApiResponse<Page<PetitionResponseDto>>> {
-        val petitions = petitionService!!.getOngoingPetitions(pageable)
+        val petitions = petitionService.getOngoingPetitions(pageable)
         return ResponseEntity.ok(ApiResponse.success(petitions))
     }
 
@@ -63,7 +61,7 @@ class PetitionController (
         @Parameter(description = "조회할 청원의 카테고리", required = true) @PathVariable category: Category,
         @Parameter(description = "청원 조회 페이징 요청 정보", required = true) pageable: Pageable
     ): ResponseEntity<ApiResponse<Page<PetitionResponseDto>>> {
-        val petitions = petitionService!!.getPetitionsByCategory(pageable, category)
+        val petitions = petitionService.getPetitionsByCategory(pageable, category)
         return ResponseEntity.ok(ApiResponse.success(petitions))
     }
 
@@ -72,7 +70,7 @@ class PetitionController (
     val endDatePetitions: ResponseEntity<ApiResponse<List<PetitionResponseDto>>>
         // 청원 만료일 순 5개 조회
         get() {
-            val endDatePetitions = petitionService!!.endDatePetitions
+            val endDatePetitions = petitionService.endDatePetitions
             return ResponseEntity.ok(ApiResponse.success(endDatePetitions))
         }
 
@@ -81,7 +79,7 @@ class PetitionController (
     val likesCountPetitions: ResponseEntity<ApiResponse<List<PetitionResponseDto>>>
         // 청원 좋아요 순 5개 조회
         get() {
-            val likesCountPetitions = petitionService!!.likesCountPetitions
+            val likesCountPetitions = petitionService.likesCountPetitions
             return ResponseEntity.ok(ApiResponse.success(likesCountPetitions))
         }
 
@@ -93,7 +91,7 @@ class PetitionController (
         @Parameter(description = "좋아요를 추가하거나 제거할 청원의 ID", required = true) @PathVariable petitionId: Long,
         @Parameter(description = "좋아요를 클릭한 회원의 ID", required = true) @RequestParam(required = false) memberId: Long
     ): ResponseEntity<ApiResponse<String>> {
-        val message = petitionService!!.toggleLikeOnPetition(petitionId, memberId)
+        val message = petitionService.toggleLikeOnPetition(petitionId, memberId)
         return ResponseEntity.ok(ApiResponse.success(message))
     }
 
@@ -103,7 +101,7 @@ class PetitionController (
     fun getRandomCategoryPetitions(
         @Parameter(description = "랜덤으로 조회할 청원의 카테고리", required = true) @PathVariable category: Category
     ): ResponseEntity<ApiResponse<List<PetitionResponseDto>>> {
-        val categoryPetitions = petitionService!!.getRandomCategoryPetitions(category)
+        val categoryPetitions = petitionService.getRandomCategoryPetitions(category)
         return ResponseEntity.ok(ApiResponse.success(categoryPetitions))
     }
 
@@ -125,7 +123,7 @@ class PetitionController (
         @Parameter(description = "수정할 청원의 ID", required = true) @PathVariable petitionId: Long,
         @Parameter(description = "청원 수정 요청 정보", required = true) @RequestBody petitionDto: PetitionRequestDto
     ): ResponseEntity<ApiResponse<PetitionDetailResponseDto>> {
-        val updatedPetition = petitionService!!.updatePetition(petitionId, petitionDto)
+        val updatedPetition = petitionService.updatePetition(petitionId, petitionDto)
         return ResponseEntity.ok(ApiResponse.success(updatedPetition))
     }
 
@@ -136,7 +134,7 @@ class PetitionController (
     fun deletePetitionById(
         @Parameter(description = "삭제할 청원의 ID", required = true) @PathVariable petitionId: Long
     ): ResponseEntity<ApiResponse<Void>> {
-        petitionService!!.deletePetitionById(petitionId)
+        petitionService.deletePetitionById(petitionId)
         return ResponseEntity.noContent().build()
     }
 
