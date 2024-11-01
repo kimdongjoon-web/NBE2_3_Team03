@@ -9,15 +9,14 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "tbl_inquiry")
 @EntityListeners(AuditingEntityListener::class)
-data class Inquiry (
+class Inquiry (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inquiry_id", nullable = false, unique = true)
-    val inquiryId: Long,
+    val inquiryId: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-
     @JoinColumn(name = "member_id", nullable = false)
     var member: Member,
 
@@ -26,50 +25,37 @@ data class Inquiry (
     var inquiryCategory: InquiryCategory,
 
     @Column(name = "inquiry_title", nullable = false)
-    var inquiryTitle: String,
+    var inquiryTitle: String = "",
 
     @Column(name = "inquiry_content", length = 2000, nullable = false)
-
     var inquiryContent: String = "",
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
-    val createdDate: LocalDateTime,
+    val createdDate: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "reply_content", length = 2000) // 문의 등록 시 관리자 답변 null
-
     var replyContent: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "inquiry_status", nullable = false)
-
-    var inquiryStatus: InquiryStatus = InquiryStatus.PENDING, // 기본값 "답변 대기 중"
+    var inquiryStatus: InquiryStatus = InquiryStatus.PENDING,
 
     @Column(name = "replied_date")
-    var repliedDate: LocalDateTime? = null // 관리자가 답변 시 갱신
-) {
-    fun changeInquiryCategory(inquiryCategory: InquiryCategory) {
-        this.inquiryCategory = inquiryCategory
-    }
+    var repliedDate: LocalDateTime? = null,
 
-    fun changeInquiryTitle(inquiryTitle: String) {
-        this.inquiryTitle = inquiryTitle
-    }
+    ) {
 
-    fun changeInquiryContent(inquiryContent: String) {
-        this.inquiryContent = inquiryContent
-    }
-
-    // 관리자 답변 내용 추가/수정 메서드
-    fun changeReplyContent(replyContent: String) {
+    fun changeReplyContent(replyContent: String?) {
         this.replyContent = replyContent
         this.inquiryStatus = InquiryStatus.RESOLVED
         this.repliedDate = LocalDateTime.now()
     }
 
     override fun toString(): String {
-        return "Inquiry(inquiryId=$inquiryId, memberId=${member.memberId}, inquiryCategory=$inquiryCategory, " +
-                "inquiryTitle='$inquiryTitle', inquiryContent='$inquiryContent', createdDate=$createdDate, " +
+        return "Inquiry(inquiryId=$inquiryId, member=${member.memberId}, inquiryCategory=$inquiryCategory," +
+                "inquiryTitle=$inquiryTitle, inquiryContent=$inquiryContent,createdDate=$createdDate," +
                 "replyContent=$replyContent, inquiryStatus=$inquiryStatus, repliedDate=$repliedDate)"
     }
+
 }
