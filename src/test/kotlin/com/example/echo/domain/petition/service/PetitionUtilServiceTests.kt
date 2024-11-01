@@ -1,8 +1,11 @@
 package com.example.echo.domain.petition.service
 
 import com.example.echo.domain.member.dto.request.MemberCreateRequest
+import com.example.echo.domain.member.entity.Member
 import com.example.echo.domain.member.entity.Role
+import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.domain.member.service.MemberService
+import com.example.echo.domain.petition.repository.PetitionRepository
 import com.example.echo.log
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -20,39 +23,43 @@ import kotlin.test.assertTrue
 class PetitionUtilServiceTests {
 
     @Autowired
+    lateinit var petitionRepository: PetitionRepository
+
+    @Autowired
     lateinit var petitionCrawlService: PetitionCrawlService
 
     @Autowired
-    lateinit var memberService: MemberService
+    lateinit var memberRepository : MemberRepository
 
     @Autowired
     lateinit var summarizationService: SummarizationService
 
+    private var admin: Member? = null
+
     @BeforeEach
     fun setUp() {
-        MemberCreateRequest(
-            "admin",
-            "김철수",
-            "admin@example.com",
-            "1111",
-            "010-1111-1111",
-            null,
-            Role.ADMIN
-        ).run {
-            memberService.createMember(this)
+        admin = Member(
+            userId = "admin",
+            name = "김철수",
+            email = "admin@example.com",
+            password = "1111",
+            phone = "010-1111-1111",
+            role = Role.ADMIN
+        ).let {
+            memberRepository.save(it)
         }
     }
 
     @Test
     @DisplayName("청원 사이트에서 전체 청원 수와 크롤링된 리스트의 수가 일치하는지 검증")
     fun dynamicCrawlTest() {
-        val memberId = 1L
         val url = "https://petitions.assembly.go.kr/proceed/onGoingAll"
 
         val totalCount = petitionCrawlService.fetchTotalCount(url)  // 전체 청원 수
-        val crawledData = petitionCrawlService.dynamicCrawl(memberId, url)  // 크롤링한 청원 리스트
+        val crawledData = petitionCrawlService.dynamicCrawl(admin!!.memberId!!, url)  // 크롤링한 청원 리스트
 
         assertEquals(totalCount, crawledData.size)
+        assertEquals(totalCount, petitionRepository.findAll().size)
     }
 
     @Test
