@@ -99,29 +99,19 @@ class PetitionService (
 
     // 좋아요 기능
     @Transactional
-    fun toggleLikeOnPetition(petitionId: Long, memberId: Long): String {
-        if (memberId == null) {
-            throw PetitionCustomException(ErrorCode.USER_NOT_MEMBER)
-        }
-
-        // 멤버 존재 여부 확인
+    fun toggleLikeOnPetition(petitionId: Long, memberId: Long?): String {
+        memberId ?: throw PetitionCustomException(ErrorCode.USER_NOT_MEMBER)
         if (!memberRepository.existsById(memberId)) {
-            throw PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) // 여기에서 발생시키는 예외
+            throw PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND)
         }
 
-        // 청원 조회
         val petition = petitionRepository.findById(petitionId)
             .orElseThrow { PetitionCustomException(ErrorCode.PETITION_NOT_FOUND) }
 
-        // 좋아요를 추가하거나 제거
         val isLiked = petition.toggleLike(memberId)
-
-        // 변경 사항을 저장
         petitionRepository.save(petition)
 
-        // 좋아요가 추가되었는지 제거되었는지에 따라 적절한 메시지 반환
-        val message = if (isLiked) "좋아요가 추가되었습니다." else "좋아요가 제거되었습니다."
-        return message
+        return if (isLiked) "좋아요가 추가되었습니다." else "좋아요가 제거되었습니다."
     }
 
     // 청원 카테고리 선택 5개 조회 (랜덤 순)
