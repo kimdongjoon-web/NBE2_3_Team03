@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "tbl_inquiry")
+@Table(name = "inquiry")
 @EntityListeners(AuditingEntityListener::class)
 class Inquiry (
 
@@ -18,7 +18,7 @@ class Inquiry (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    var member: Member,
+    var member: Member = Member(),
 
     @Enumerated(EnumType.STRING)
     @Column(name = "inquiry_category", nullable = false)
