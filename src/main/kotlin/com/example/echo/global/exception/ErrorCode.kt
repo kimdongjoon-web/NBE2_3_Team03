@@ -24,6 +24,7 @@ enum class ErrorCode(
 
     // Petition
     PETITION_NOT_FOUND(NOT_FOUND, "청원을 찾을 수 없습니다."),
+    PETITION_EXPIRED(NOT_FOUND, "청원 만료 기간이 지났습니다."),
     SELENIUM_TIMEOUT(BAD_REQUEST, "크롤링 도중 시간 초과가 발생했습니다."),
     SELENIUM_NO_ELEMENT_FOUND(NOT_FOUND, "페이지에서 필요한 요소를 찾을 수 없습니다."),
     SELENIUM_UNKNOWN_ERROR(INTERNAL_SERVER_ERROR, "알 수 없는 크롤링 오류가 발생했습니다."),
