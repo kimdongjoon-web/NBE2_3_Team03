@@ -49,7 +49,7 @@ data class PetitionRequestDto(
     }
 
     fun toEntityWithExistingData(existingPetition: Petition, member: Member): Petition {
-        return existingPetition.copy(
+        return Petition(
             member = member,
             title = this.title,
             content = this.content,
