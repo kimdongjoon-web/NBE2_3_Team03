@@ -40,7 +40,7 @@ class InquiryService(
     }
 
     fun getInquiriesByMemberRole(inquiryRequest: InquiryPageRequest, memberId: Long): Page<InquiryResponse> {
-        val foundMember = memberService.findMemberById(memberId)
+        val foundMember = memberService.getMember(memberId)
         return if (foundMember.role == Role.ADMIN) {
             findAllForAdmin(inquiryRequest.getPageable()) // ADMIN 모든 문의 조회
         } else {
