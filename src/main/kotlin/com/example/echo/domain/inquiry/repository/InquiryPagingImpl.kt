@@ -23,20 +23,7 @@ class InquiryPagingImpl :
         val query: JPQLQuery<Inquiry> = from(inquiry)
             .leftJoin(inquiry.member, member)
             .where(member.memberId.eq(memberId))
-            .select(
-                Projections.bean(
-                    Inquiry::class.java,
-                    inquiry.inquiryId,
-                    member.memberId.`as`("memberId"),
-                    inquiry.inquiryCategory,
-                    inquiry.inquiryTitle,
-                    inquiry.inquiryContent,
-                    inquiry.createdDate,
-                    inquiry.replyContent,
-                    inquiry.inquiryStatus,
-                    inquiry.repliedDate
-                )
-            )
+            .select(inquiry)
 
         querydsl!!.applyPagination(pageable, query)
 
