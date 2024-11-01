@@ -41,6 +41,7 @@ out/
 
 .env
 application-db.properties
+src/main/http
 
 ### DS_Store ###
 .DS_Store
