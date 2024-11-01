@@ -18,26 +18,26 @@ data class Member(
     val memberId: Long? = null,
 
     @Column(name = "user_Id", nullable = false, unique = true)
-    var userId: String,
+    var userId: String = "",
 
     @Column(name = "name", nullable = false)
-    var name: String,
+    var name: String = "",
 
     @Column(name = "email", nullable = false, unique = true)
-    var email: String,
+    var email: String = "",
 
     @Column(name = "password", nullable = false)
-    var password: String,
+    var password: String = "",
 
     @Column(name = "phone", nullable = false, length = 20)
-    var phone: String,
+    var phone: String = "",
 
     @Column(name = "avatar_image")
     var avatarImage: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    var role: Role,
+    var role: Role = Role.USER,
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
@@ -47,7 +47,6 @@ data class Member(
     @ElementCollection
     @CollectionTable(name = "member_interests", joinColumns = [JoinColumn(name = "member_id")])
     @Column(name = "petition_id")
-
     val interestList: MutableList<Long> = mutableListOf(),
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL])
