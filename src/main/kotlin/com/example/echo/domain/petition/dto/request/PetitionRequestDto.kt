@@ -17,7 +17,7 @@ data class PetitionRequestDto(
     val content: String,
 
     @Schema(description = "청원 요약", example = "독도 보호에 대한 간략한 요약")
-    val summary: String,
+    val summary: String? = null,
 
     @Schema(description = "청원 시작일", example = "2024-10-01T00:00:00")
     val startDate: LocalDateTime,
@@ -32,7 +32,7 @@ data class PetitionRequestDto(
     val originalUrl: String,
 
     @Schema(description = "관련 뉴스", example = "https://www.newspenguin.com/news/articleView.html?idxno=16159")
-    val relatedNews: String
+    val relatedNews: String? = null
 ) {
     fun toEntity(member: Member): Petition {
         return Petition(
@@ -49,19 +49,17 @@ data class PetitionRequestDto(
     }
 
     fun toEntityWithExistingData(existingPetition: Petition, member: Member): Petition {
-        return Petition(
-            member = member,
-            title = this.title,
-            content = this.content,
-            summary = this.summary,
-            startDate = this.startDate,
-            endDate = this.endDate,
-            category = this.category,
-            originalUrl = this.originalUrl,
-            relatedNews = this.relatedNews,
-            likesCount = existingPetition.likesCount,
-            interestCount = existingPetition.interestCount,
-            agreeCount = existingPetition.agreeCount
-        )
+        existingPetition.member = member
+        existingPetition.title = this.title
+        existingPetition.content = this.content
+        existingPetition.summary = this.summary
+        existingPetition.startDate = this.startDate
+        existingPetition.endDate = this.endDate
+        existingPetition.category = this.category
+        existingPetition.originalUrl = this.originalUrl
+        existingPetition.relatedNews = this.relatedNews
+
+        // likesCount, interestCount, agreeCount는 기존값 유지
+        return existingPetition
     }
 }

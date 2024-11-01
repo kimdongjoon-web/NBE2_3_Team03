@@ -45,7 +45,7 @@ class PetitionService (
         // 청원 기간 만료 체크 -> 따로 서비스 층에 작성
         //  위에서 exception 발생 안함 = 청원이 존재한다는 뜻 -> 단순 날짜 비교만 진행
         if (isExpired(petition)) { // 만료되었으면 예외 발생
-            throw PetitionCustomException(ErrorCode.PETITION_NOT_FOUND)
+            throw PetitionCustomException(ErrorCode.PETITION_EXPIRED)
         }
 
         val summary = petition.summary // 요약 내용 체크
