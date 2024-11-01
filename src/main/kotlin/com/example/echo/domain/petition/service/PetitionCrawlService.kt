@@ -28,7 +28,7 @@ class PetitionCrawlService(
 ) {
     private val driver: WebDriver = ChromeDriver(
         ChromeOptions().apply {
-            addArguments("--headless")
+//            addArguments("--headless")
         }
     ).apply {
         manage().window().size = Dimension(390, 844)
@@ -246,5 +246,28 @@ class PetitionCrawlService(
 
         log.error("Failed to fetch agree count after multiple attempts for URL: $url")
         return -1 // 모든 재시도에서 실패한 경우 -1 반환
+    }
+
+    // 메인 페이지에서 전체 청원 수 추출
+    fun fetchTotalCount(url: String): Int {
+        driver.get(url)
+        waitForPageLoad()
+
+        return try {
+            val totalText = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.total span.case"))
+            ).text
+
+            // 숫자만 추출하고 변환
+            totalText.let {
+                Regex("\\d+").find(it)?.value?.toInt() ?: 0
+            }
+        } catch (e: TimeoutException) { // 실패한 경우 -1 반환
+            log.warn("Timeout waiting for total count element on URL: $url")
+            -1
+        } catch (e: NoSuchElementException) {
+            log.warn("Element not found for total count on URL: $url")
+            -1
+        }
     }
 }

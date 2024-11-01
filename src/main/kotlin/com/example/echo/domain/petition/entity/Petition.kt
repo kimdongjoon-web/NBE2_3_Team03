@@ -59,5 +59,17 @@ class Petition(
     @ElementCollection
     var likedMemberIds: MutableSet<Long> = mutableSetOf()
 ) {
+    // 좋아요를 추가하거나 제거
+    fun toggleLike(memberId: Long): Boolean {
+        val isLiked = likedMemberIds.contains(memberId)  // 현재 좋아요 여부 확인
+        if (isLiked) {
+            likedMemberIds.remove(memberId)  // 이미 좋아요를 눌렀다면 제거
+            likesCount--
+        } else {
+            likedMemberIds.add(memberId)  // 좋아요를 누르지 않았다면 추가
+            likesCount++
+        }
+        return !isLiked  // true: 추가됨, false: 제거됨
+    }
 
 }
