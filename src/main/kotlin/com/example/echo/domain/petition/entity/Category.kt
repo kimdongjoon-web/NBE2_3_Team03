@@ -1,6 +1,9 @@
 package com.example.echo.domain.petition.entity
 
-enum class Category(val description: String) {
+enum class Category(
+    val description: String
+) {
+
     POLITICS("정치/선거/국회운영"),
     INVESTIGATION("수사/법무/사법제도"),
     FINANCE("재정/세제/금융/예산"),
@@ -21,8 +24,10 @@ enum class Category(val description: String) {
     OTHERS("기타");
 
     companion object {
-        fun fromDescription(description: String): Category? {
-            return values().find { it.description.equals(description.trim(), ignoreCase = true) }
+
+        fun from(description: String): Category? = entries.firstOrNull {
+            it.description.equals(description.trim(), ignoreCase = true)
         }
     }
 }
+

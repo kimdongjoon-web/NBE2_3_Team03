@@ -10,8 +10,14 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "member")
 @EntityListeners(AuditingEntityListener::class)
-class Member(
-    @Column(name = "user_id", nullable = false, unique = true)
+data class Member(
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id", nullable = false, unique = true)
+    val memberId: Long? = null,
+
+    @Column(name = "user_Id", nullable = false, unique = true)
     var userId: String,
 
     @Column(name = "name", nullable = false)
@@ -46,11 +52,6 @@ class Member(
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL])
     val inquiryList: MutableList<Inquiry> = mutableListOf(),
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", nullable = false, unique = true)
-    val memberId: Long? = null
 ) {
 
     // 문의 추가 메서드
