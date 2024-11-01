@@ -59,5 +59,24 @@ class Petition(
     @ElementCollection
     var likedMemberIds: MutableSet<Long> = mutableSetOf()
 ) {
+    fun changeSummary(summary: String) {
+        this.summary = summary
+    }
 
+    fun changeAgreeCount(agreeCount: Int) {
+        this.agreeCount = agreeCount
+    }
+
+    // 좋아요 추가/제거
+    fun toggleLike(memberId: Long): Boolean {
+        val isLiked = likedMemberIds.contains(memberId)
+        if (isLiked) {
+            likedMemberIds.remove(memberId)
+            likesCount--
+        } else {
+            likedMemberIds.add(memberId)
+            likesCount++
+        }
+        return !isLiked
+    }
 }
