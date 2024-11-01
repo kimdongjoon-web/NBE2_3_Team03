@@ -65,23 +65,19 @@ class PetitionController (
         return ResponseEntity.ok(ApiResponse.success(petitions))
     }
 
-    @get:GetMapping("/view/endDate")
-    @get:Operation(summary = "청원 만료일 기준 조회", description = "만료일이 가까운 청원 5개를 조회합니다.")
-    val endDatePetitions: ResponseEntity<ApiResponse<List<PetitionResponseDto>>>
-        // 청원 만료일 순 5개 조회
-        get() {
-            val endDatePetitions = petitionService.endDatePetitions
-            return ResponseEntity.ok(ApiResponse.success(endDatePetitions))
-        }
+    @GetMapping("/view/endDate")
+    @Operation(summary = "청원 만료일 기준 조회", description = "만료일이 가까운 청원 5개를 조회합니다.")
+    fun getEndDatePetitions(): ResponseEntity<ApiResponse<List<PetitionResponseDto>>> {
+        val endDatePetitions = petitionService.endDatePetitions
+        return ResponseEntity.ok(ApiResponse.success(endDatePetitions))
+    }
 
-    @get:GetMapping("/view/likesCount")
-    @get:Operation(summary = "청원 좋아요 수 기준 조회", description = "좋아요 수가 많은 청원 5개를 조회합니다.")
-    val likesCountPetitions: ResponseEntity<ApiResponse<List<PetitionResponseDto>>>
-        // 청원 좋아요 순 5개 조회
-        get() {
-            val likesCountPetitions = petitionService.likesCountPetitions
-            return ResponseEntity.ok(ApiResponse.success(likesCountPetitions))
-        }
+    @GetMapping("/view/likesCount")
+    @Operation(summary = "청원 좋아요 수 기준 조회", description = "좋아요 수가 많은 청원 5개를 조회합니다.")
+    fun getLikesCountPetitions(): ResponseEntity<ApiResponse<List<PetitionResponseDto>>> {
+        val likesCountPetitions = petitionService.likesCountPetitions
+        return ResponseEntity.ok(ApiResponse.success(likesCountPetitions))
+    }
 
     // 청원 좋아요 기능
     @PreAuthorize("authentication.principal.memberId == #memberId")
