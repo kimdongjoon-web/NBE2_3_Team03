@@ -65,7 +65,7 @@ data class Member(
             "userId" to userId,
             "name" to name,
             "email" to email,
-            "role" to role.toString() // Enum을 문자열로 변환
+            "role" to role // 기존 문자열 반환에서 수정
         )
     }
 

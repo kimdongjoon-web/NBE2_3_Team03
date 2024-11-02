@@ -21,6 +21,7 @@ enum class ErrorCode(
     INVALID_REFRESH_TOKEN(UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
     REFRESH_TOKEN_EXPIRED(UNAUTHORIZED, "만료된 리프레시 토큰입니다."),
     INSUFFICIENT_PERMISSIONS(FORBIDDEN, "해당 작업을 수행할 권한이 없습니다."),
+    AVATAR_NOT_FOUND(NOT_FOUND, "프로필 아바타를 찾을 수 없습니다."),
 
     // Petition
     PETITION_NOT_FOUND(NOT_FOUND, "청원을 찾을 수 없습니다."),

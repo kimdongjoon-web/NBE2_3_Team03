@@ -28,7 +28,7 @@ class PetitionCrawlService(
 ) {
     private val driver: WebDriver = ChromeDriver(
         ChromeOptions().apply {
-//            addArguments("--headless")
+            addArguments("--headless")
         }
     ).apply {
         manage().window().size = Dimension(390, 844)

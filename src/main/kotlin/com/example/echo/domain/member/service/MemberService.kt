@@ -75,17 +75,20 @@ class MemberService(
 
         // 비밀번호 변경 시 추가 검증
         memberRequest.newPassword?.let { newPassword ->
+            val currentPassword =
+                memberRequest.currentPassword ?: throw PetitionCustomException(ErrorCode.INVALID_PASSWORD)
+
             // 현재 비밀번호 확인
-            memberRequest.currentPassword?.let { currentPassword ->
-                if (!passwordEncoder.matches(currentPassword, member.password)) {
-                    throw PetitionCustomException(ErrorCode.INVALID_OLD_PASSWORD)
-                }
-                // 새 비밀번호가 현재 비밀번호와 같은지 확인
-                if (passwordEncoder.matches(newPassword, member.password)) {
-                    throw PetitionCustomException(ErrorCode.SAME_AS_OLD_PASSWORD)
-                }
-                member.password = passwordEncoder.encode(newPassword)
-            } ?: throw PetitionCustomException(ErrorCode.INVALID_PASSWORD)
+            if (!passwordEncoder.matches(currentPassword, member.password)) {
+                throw PetitionCustomException(ErrorCode.INVALID_OLD_PASSWORD)
+            }
+
+            // 새 비밀번호가 현재 비밀번호와 같은지 확인
+            if (passwordEncoder.matches(newPassword, member.password)) {
+                throw PetitionCustomException(ErrorCode.SAME_AS_OLD_PASSWORD)
+            }
+
+            member.password = passwordEncoder.encode(newPassword)
         }
 
         // MemberUpdateRequest 사용하여 업데이트
@@ -100,8 +103,9 @@ class MemberService(
     }
 
     // 프로필 사진 조회
-    fun getAvatar(memberId: Long): String? {
+    fun getAvatar(memberId: Long): String {
         return findMemberById(memberId).avatarImage
+            ?: throw PetitionCustomException(ErrorCode.AVATAR_NOT_FOUND)
     }
 
     // 프로필 사진 업데이트
@@ -127,47 +131,47 @@ class MemberService(
      */
 
     // userId로 회원 조회
-    private fun findMemberByUserId(userId: String): Member {
+    internal fun findMemberByUserId(userId: String): Member {
         return memberRepository.findByUserId(userId)
             ?: throw PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND)
     }
 
     // memberId로 회원 조회
-    fun findMemberById(memberId: Long): Member {
+    internal fun findMemberById(memberId: Long): Member {
         return memberRepository.findById(memberId)
             .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
     }
 
     // userId 중복 확인
-    private fun checkUserIdDuplicate(userId: String) {
+    internal fun checkUserIdDuplicate(userId: String) {
         if (memberRepository.findByUserId(userId) != null) {
             throw PetitionCustomException(ErrorCode.USERID_ALREADY_EXISTS)
         }
     }
 
     // 이메일 중복 확인
-    private fun checkEmailDuplicate(email: String) {
+    internal fun checkEmailDuplicate(email: String) {
         memberRepository.findByEmail(email)?.let {
             throw PetitionCustomException(ErrorCode.EMAIL_ALREADY_EXISTS)
         }
     }
 
     // 전화번호 중복 확인
-    private fun checkPhoneDuplicate(phone: String) {
+    internal fun checkPhoneDuplicate(phone: String) {
         memberRepository.findByPhone(phone)?.let {
             throw PetitionCustomException(ErrorCode.PHONE_ALREADY_EXISTS)
         }
     }
 
     // 비밀번호 검증
-    private fun validatePassword(rawPassword: String, encodedPassword: String) {
+    internal fun validatePassword(rawPassword: String, encodedPassword: String) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
             throw PetitionCustomException(ErrorCode.INVALID_PASSWORD)
         }
     }
 
     // JWT 토큰 생성
-    private fun makeToken(member: Member): Map<String, String> {
+    internal fun makeToken(member: Member): Map<String, String> {
         val accessToken = jwtUtil.createToken(member.getPayload(), 60) // 60분 유효
         val refreshToken = jwtUtil.createToken(mapOf("userId" to member.userId), 60 * 24 * 7) // 7일 유효
 
