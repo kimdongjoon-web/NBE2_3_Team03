@@ -189,9 +189,13 @@ class PetitionCrawlService(
     ).click()
 
     // 페이지가 완전히 로드될 때까지 대기
-    private fun waitForPageLoad() = wait.until {
-        (driver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
+    private fun waitForPageLoad() {
+        wait.until {
+            (driver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
+        }
+        Thread.sleep(500)
     }
+
 
     // 상세 페이지에서 청원 내용을 가져와서 주어진 PetitionCrawlResponse에 설정
     private fun setContentFromDetailPage(response: PetitionCrawlResponse) {
