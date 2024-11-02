@@ -193,6 +193,7 @@ class PetitionCrawlService(
         wait.until {
             (driver as JavascriptExecutor).executeScript("return document.readyState") == "complete"
         }
+        // 추가로 500ms 대기
         Thread.sleep(500)
     }
 
