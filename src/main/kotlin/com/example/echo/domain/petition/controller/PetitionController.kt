@@ -75,7 +75,7 @@ class PetitionController (
     @GetMapping("/view/likesCount")
     @Operation(summary = "청원 좋아요 수 기준 조회", description = "좋아요 수가 많은 청원 5개를 조회합니다.")
     fun getLikesCountPetitions(): ResponseEntity<ApiResponse<List<PetitionResponseDto>>> {
-        val likesCountPetitions = petitionService.likesCountPetitions
+        val likesCountPetitions = petitionService.getLikesCountPetitions()
         return ResponseEntity.ok(ApiResponse.success(likesCountPetitions))
     }
 
