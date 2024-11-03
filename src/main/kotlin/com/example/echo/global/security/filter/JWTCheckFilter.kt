@@ -59,6 +59,10 @@ class JWTCheckFilter(
             return true
         }
 
+        if (requestURI.startsWith("/api/v1/search")) {
+            return requestURI == "/api/v1/search/news/search"
+        }
+
         if (requestURI.startsWith("/api/petitions") && method.equals("GET", ignoreCase = true)) {
             return requestURI != "/api/petitions/Myinterest"
         }
