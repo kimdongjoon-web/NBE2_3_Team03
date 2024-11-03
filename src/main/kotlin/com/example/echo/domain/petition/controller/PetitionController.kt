@@ -1,12 +1,16 @@
 package com.example.echo.domain.petition.controller
 
+import com.example.echo.domain.inquiry.dto.response.InquiryResponse
 import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.domain.petition.dto.request.PetitionRequestDto
+import com.example.echo.domain.petition.dto.response.AgeGroupInterestCountResponse
 import com.example.echo.domain.petition.dto.response.PetitionDetailResponseDto
 import com.example.echo.domain.petition.dto.response.PetitionResponseDto
 import com.example.echo.domain.petition.entity.Category
+import com.example.echo.domain.petition.service.AgeGroupInterestCountService
 import com.example.echo.domain.petition.service.PetitionService
 import com.example.echo.global.api.ApiResponse
+import com.example.echo.global.security.auth.CustomUserPrincipal
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -14,14 +18,16 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/petitions")
 @Tag(name = "Petition Controller", description = "청원 관리 API")
-class PetitionController (
+class PetitionController(
     private val petitionService: PetitionService,
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val ageGroupInterestCountService: AgeGroupInterestCountService
 ){
     // 청원 등록
     @Operation(summary = "청원 등록", description = "새로운 청원을 등록합니다.")
@@ -134,5 +140,18 @@ class PetitionController (
         return ResponseEntity.noContent().build()
     }
 
+
+
+    // 나이 기준 정렬
+    @Operation(summary = "나이 기준 관심 청원 조회", description = "사용자의 나이와 비슷한 이용자의 관심 청원을 조회합니다.")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping
+    fun getPetitionsByAge(
+        @Parameter(description = "현재 인증된 사용자 정보", required = true)
+        @AuthenticationPrincipal principal: CustomUserPrincipal
+    ): ResponseEntity<ApiResponse<List<AgeGroupInterestCountResponse>>> {
+        val interestPetitions = ageGroupInterestCountService.getTopPetitionsByAgeGroup(principal.memberId)
+        return ResponseEntity.ok(ApiResponse.success(interestPetitions))
+    }
 
 }
