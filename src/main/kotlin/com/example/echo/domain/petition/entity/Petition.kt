@@ -52,7 +52,11 @@ class Petition(
     var agreeCount: Int? = null,
 
     @ElementCollection
-    var likedMemberIds: MutableSet<Long> = mutableSetOf()
+    var likedMemberIds: MutableSet<Long> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "petition")
+    val news: MutableList<News> = mutableListOf()
+
 ) {
     // 좋아요를 추가하거나 제거
     fun toggleLike(memberId: Long): Boolean {
