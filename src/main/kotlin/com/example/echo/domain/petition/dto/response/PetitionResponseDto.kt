@@ -3,9 +3,10 @@ package com.example.echo.domain.petition.dto.response
 import com.example.echo.domain.petition.entity.Category
 import com.example.echo.domain.petition.entity.Petition
 import io.swagger.v3.oas.annotations.media.Schema
+import java.io.Serializable
 import java.time.LocalDateTime
 
-class PetitionResponseDto (petition: Petition){
+class PetitionResponseDto (petition: Petition) : Serializable{
     @Schema(description = "청원의 ID", example = "1")
     var petitionId: Long? = null
 
@@ -39,5 +40,9 @@ class PetitionResponseDto (petition: Petition){
         this.likesCount = petition.likesCount
         this.interestCount = petition.interestCount
         this.agreeCount = petition.agreeCount
+    }
+
+    companion object {
+        private const val serialVersionUID = 1L  // serialVersionUID 추가
     }
 }
