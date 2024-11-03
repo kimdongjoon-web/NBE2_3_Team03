@@ -32,7 +32,6 @@ class NewsSearchService(
         return newsRepository.saveAll(response.items.map { it.toDomain() })
     }
 
-    // 새로운 메서드 (검색만)
     fun searchNewsOnly(request: NewsSearchRequest): List<News> {
         val response = naverNewsSearchUtil.searchNews(
             query = request.query,
@@ -79,7 +78,6 @@ class NewsSearchService(
         }
     }
 
-    // 기존 청원에 저장된 뉴스 연결하는 메서드 추가
     @Transactional
     fun updatePetitionWithExistingNews(petitionId: Long, newsId: Long): Petition {
         val petition = petitionRepository.findById(petitionId)
@@ -92,7 +90,6 @@ class NewsSearchService(
         return petitionRepository.save(petition)
     }
 
-    // 저장된 뉴스 목록 조회
     @Transactional(readOnly = true)
     fun getAllNews(): List<NewsResponseDto> {
         return newsRepository.findAll()
