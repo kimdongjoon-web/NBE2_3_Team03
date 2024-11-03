@@ -23,6 +23,9 @@ data class Member(
     @Column(name = "name", nullable = false)
     var name: String = "",
 
+    @Column(name = "age", nullable = false)
+    var age: Int = 0,
+
     @Column(name = "email", nullable = false, unique = true)
     var email: String = "",
 
@@ -42,7 +45,6 @@ data class Member(
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
     val createdDate: LocalDateTime = LocalDateTime.now(),
-
 
     @ElementCollection
     @CollectionTable(name = "member_interests", joinColumns = [JoinColumn(name = "member_id")])
