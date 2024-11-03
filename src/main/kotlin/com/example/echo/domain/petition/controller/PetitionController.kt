@@ -1,19 +1,27 @@
 package com.example.echo.domain.petition.controller
 
 import com.example.echo.domain.member.repository.MemberRepository
+import com.example.echo.domain.petition.dto.request.InterestRequestDTO
 import com.example.echo.domain.petition.dto.request.PetitionRequestDto
+import com.example.echo.domain.petition.dto.response.InterestPetitionResponseDTO
 import com.example.echo.domain.petition.dto.response.PetitionDetailResponseDto
 import com.example.echo.domain.petition.dto.response.PetitionResponseDto
 import com.example.echo.domain.petition.entity.Category
 import com.example.echo.domain.petition.service.PetitionService
 import com.example.echo.global.api.ApiResponse
+import com.example.echo.global.exception.ErrorCode
+import com.example.echo.global.exception.PetitionCustomException
+import com.example.echo.global.security.auth.CustomUserPrincipal
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -71,7 +79,6 @@ class PetitionController (
         val endDatePetitions = petitionService.endDatePetitions
         return ResponseEntity.ok(ApiResponse.success(endDatePetitions))
     }
-
     @GetMapping("/view/likesCount")
     @Operation(summary = "청원 좋아요 수 기준 조회", description = "좋아요 수가 많은 청원 5개를 조회합니다.")
     fun getLikesCountPetitions(): ResponseEntity<ApiResponse<List<PetitionResponseDto>>> {
@@ -134,5 +141,76 @@ class PetitionController (
         return ResponseEntity.noContent().build()
     }
 
+    // 관심 목록 추가
+    @PreAuthorize("authentication.principal.memberId == #requestDTO.memberId")
+    @Operation(summary = "관심 목록 추가", description = "청원을 관심 목록에 추가합니다.")
+    @PostMapping("/interestAdd")
+    fun addInterest(
+        @Parameter(description = "관심 목록 추가 요청 정보", required = true) @RequestBody requestDTO: InterestRequestDTO
+    ): ResponseEntity<ApiResponse<Any?>> {
+        return try {
+            petitionService.addInterest(requestDTO)
+            ResponseEntity.ok(ApiResponse.success("추가되었습니다.", null))
+        } catch (e: EntityNotFoundException) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("Entity not found"))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest()
+                .body(ApiResponse.error("관심사 추가 중 오류가 발생했습니다: ${e.message}"))
+        }
+    }
 
+    // 관심 목록 제거
+    @PreAuthorize("authentication.principal.memberId == #requestDTO.memberId")
+    @Operation(summary = "관심 목록 제거", description = "청원을 관심 목록에서 제거합니다.")
+    @PostMapping("/interestRemove")
+    fun removeInterest(
+        @Parameter(description = "관심 목록 제거 요청 정보", required = true) @RequestBody requestDTO: InterestRequestDTO
+    ): ResponseEntity<ApiResponse<Any?>> {
+        return try {
+            petitionService.removeInterest(requestDTO)
+            ResponseEntity.ok(ApiResponse.success("관심사가 성공적으로 제거되었습니다.", null))
+        } catch (e: EntityNotFoundException) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("Entity not found"))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest()
+                .body(ApiResponse.error("관심사 제거 중 오류가 발생했습니다: ${e.message}"))
+        }
+    }
+
+    // 나의 관심 목록 조회
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "내 관심 목록 조회", description = "현재 사용자의 관심 목록을 조회합니다.")
+    @GetMapping("/Myinterest")
+    fun getInterestList(
+        @Parameter(
+            description = "현재 인증된 사용자 정보", required = true)
+        @AuthenticationPrincipal principal: CustomUserPrincipal
+    ): ResponseEntity<ApiResponse<*>> {
+        val member = memberRepository.findById(principal.memberId)
+            .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+
+        return try {
+            // 회원의 관심 목록 조회
+            val interestList: List<InterestPetitionResponseDTO> = petitionService.getInterestList(member)
+            ResponseEntity.ok(ApiResponse.success(interestList))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest()
+                .body(error("관심 목록 조회 중 오류가 발생했습니다: ${e.message}"))
+        }
+    }
+
+    // 관심 목록 수에 따라 정렬
+    @Operation(summary = "관심 목록 수 기준 조회", description = "관심 목록 수에 따라 청원을 정렬하여 조회합니다.")
+    @GetMapping("/interests")
+    fun getPetitionsByInterestCount(): ResponseEntity<ApiResponse<List<InterestPetitionResponseDTO>>> {
+        return try {
+            val petitionList: List<InterestPetitionResponseDTO> = petitionService.getPetitionsByInterestCount()
+            ResponseEntity.ok(ApiResponse.success(petitionList))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest()
+                .body(ApiResponse.error("관심사 순위 목록 조회 중 오류가 발생했습니다: ${e.message}"))
+        }
+    }
 }
