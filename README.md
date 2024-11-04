@@ -174,14 +174,14 @@
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ service<br/>
 </details>
 <details>
-  <summary>📦 ERD 구조 </summary>
-<img alt="echo_ERD" src="https://github.com/user-attachments/assets/85a72517-dcfb-4f94-a96d-c5bf90a65072">
+  <summary>📦 ERD - Kotlin </summary>
+<img alt="echo_ERD" src="https://github.com/user-attachments/assets/124f11c0-44fa-434d-b39f-2f2d77233508">
 </details>
 
 <br>
 
 ## 💻시스템 아키텍처
-![3차프로젝트_4](https://github.com/user-attachments/assets/33187b23-1d2f-43c2-9e6e-f483b03725d6)
+![3차프로젝트_8](https://github.com/user-attachments/assets/efedc8f2-48ef-4918-aed9-50a744a09bab)
 <br>
 
 <br>
