@@ -1,15 +1,14 @@
 package com.example.echo.domain.petition.controller
 
-import org.springframework.web.bind.annotation.*
-import org.springframework.http.ResponseEntity
-import com.example.echo.domain.petition.service.NewsSearchService
 import com.example.echo.domain.petition.dto.request.NewsSearchRequest
 import com.example.echo.domain.petition.dto.response.NewsResponseDto
 import com.example.echo.domain.petition.dto.response.PetitionDetailResponseDto
-import com.example.echo.domain.petition.entity.Petition
+import com.example.echo.domain.petition.service.NewsSearchService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/search")

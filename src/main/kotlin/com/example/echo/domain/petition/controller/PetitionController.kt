@@ -8,7 +8,6 @@ import com.example.echo.domain.petition.dto.response.InterestPetitionResponseDTO
 import com.example.echo.domain.petition.dto.response.PetitionDetailResponseDto
 import com.example.echo.domain.petition.dto.response.PetitionResponseDto
 import com.example.echo.domain.petition.entity.Category
-import com.example.echo.domain.petition.entity.Petition
 import com.example.echo.domain.petition.service.AgreeCountMonitoringService
 import com.example.echo.domain.petition.service.PetitionService
 import com.example.echo.global.api.ApiResponse
@@ -223,7 +222,5 @@ class PetitionController(
     // 동의자 수 업데이트 후, 급증 청원 리스트 요청
     @Operation(summary = "동의자 수 급증 청원 데이터 조회", description = "동의자 수가 크게 증가한 순으로 청원을 정렬하여 조회합니다.")
     @GetMapping("/increased")
-    fun getIncreasedPetitions(
-        @Parameter(description = "동의자 수 급증 청원 페이징 요청 정보", required = true) pageable: Pageable
-    ): List<IncreasedPetitionResponse> = agreeCountMonitoringService.increasedAgreeCountList()
+    fun getIncreasedPetitions(): List<IncreasedPetitionResponse> = agreeCountMonitoringService.increasedAgreeCountList()
 }
