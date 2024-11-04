@@ -42,4 +42,9 @@ enum class ErrorCode(
     INVALID_UPLOAD_PATH(INTERNAL_SERVER_ERROR, "업로드 경로가 올바르지 않습니다."),
     FILE_SIZE_LIMIT_EXCEEDED(BAD_REQUEST, "파일 크기 제한을 초과했습니다."),
     FILE_NOT_FOUND(NOT_FOUND, "파일을 찾을 수 없습니다."),
+
+    // Global
+    INVALID_ARGUMENT(BAD_REQUEST, "입력 값이 유효하지 않습니다."),
+    ACCESS_DENIED(FORBIDDEN, "해당 요청에 대한 권한이 부족하여 접근이 거부되었습니다.");
+
 }
