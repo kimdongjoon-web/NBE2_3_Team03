@@ -1,6 +1,7 @@
 package com.example.echo.domain.petition.repository
 
 
+import com.example.echo.domain.petition.dto.response.IncreasedPetitionResponse
 import com.example.echo.domain.petition.dto.response.PetitionResponseDto
 import com.example.echo.domain.petition.entity.Category
 import com.example.echo.domain.petition.entity.Petition
@@ -36,4 +37,10 @@ interface PetitionRepository : JpaRepository<Petition, Long> {
 
     @Query("SELECT p FROM Petition p WHERE p.endDate >= CURRENT_DATE")
     fun findAllActive(): List<Petition>
+
+    @Query("SELECT p FROM Petition p WHERE p.endDate >= CURRENT_DATE " +
+            "AND p.previousAgreeCount > 0 " +
+            "AND (p.agreeCount - p.previousAgreeCount) > 0 " +
+            "ORDER BY (p.agreeCount - p.previousAgreeCount) DESC")
+    fun findPetitionsWithIncreasedAgreeCount(pageable: Pageable): List<IncreasedPetitionResponse>
 }

@@ -3,10 +3,12 @@ package com.example.echo.domain.petition.controller
 import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.domain.petition.dto.request.InterestRequestDTO
 import com.example.echo.domain.petition.dto.request.PetitionRequestDto
+import com.example.echo.domain.petition.dto.response.IncreasedPetitionResponse
 import com.example.echo.domain.petition.dto.response.InterestPetitionResponseDTO
 import com.example.echo.domain.petition.dto.response.PetitionDetailResponseDto
 import com.example.echo.domain.petition.dto.response.PetitionResponseDto
 import com.example.echo.domain.petition.entity.Category
+import com.example.echo.domain.petition.service.AgreeCountMonitoringService
 import com.example.echo.domain.petition.service.PetitionService
 import com.example.echo.global.api.ApiResponse
 import com.example.echo.global.exception.ErrorCode
@@ -27,10 +29,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/petitions")
 @Tag(name = "Petition Controller", description = "청원 관리 API")
-class PetitionController (
+class PetitionController(
     private val petitionService: PetitionService,
-    private val memberRepository: MemberRepository
-){
+    private val memberRepository: MemberRepository,
+    private val agreeCountMonitoringService: AgreeCountMonitoringService
+) {
     // 청원 등록
     @Operation(summary = "청원 등록", description = "새로운 청원을 등록합니다.")
     @PreAuthorize("hasRole('ADMIN')")
@@ -79,6 +82,7 @@ class PetitionController (
         val endDatePetitions = petitionService.endDatePetitions
         return ResponseEntity.ok(ApiResponse.success(endDatePetitions))
     }
+
     @GetMapping("/view/likesCount")
     @Operation(summary = "청원 좋아요 수 기준 조회", description = "좋아요 수가 많은 청원 5개를 조회합니다.")
     fun getLikesCountPetitions(): ResponseEntity<ApiResponse<List<PetitionResponseDto>>> {
@@ -185,7 +189,8 @@ class PetitionController (
     @GetMapping("/Myinterest")
     fun getInterestList(
         @Parameter(
-            description = "현재 인증된 사용자 정보", required = true)
+            description = "현재 인증된 사용자 정보", required = true
+        )
         @AuthenticationPrincipal principal: CustomUserPrincipal
     ): ResponseEntity<ApiResponse<*>> {
         val member = memberRepository.findById(principal.memberId)
@@ -213,4 +218,9 @@ class PetitionController (
                 .body(ApiResponse.error("관심사 순위 목록 조회 중 오류가 발생했습니다: ${e.message}"))
         }
     }
+
+    // 동의자 수 업데이트 후, 급증 청원 리스트 요청
+    @Operation(summary = "동의자 수 급증 청원 데이터 조회", description = "동의자 수가 크게 증가한 순으로 청원을 정렬하여 조회합니다.")
+    @GetMapping("/increased")
+    fun getIncreasedPetitions(): List<IncreasedPetitionResponse> = agreeCountMonitoringService.increasedAgreeCountList()
 }

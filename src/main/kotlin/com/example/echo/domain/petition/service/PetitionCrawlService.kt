@@ -47,7 +47,7 @@ class PetitionCrawlService(
         } catch (e: Exception) {
             log.error("An error occurred: ", e)
         } finally {
-            driver.quit()
+//            driver.quit()
         }
         return crawledData
     }
