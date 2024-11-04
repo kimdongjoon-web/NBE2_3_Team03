@@ -225,7 +225,8 @@ class PetitionController (
     // 동의자 수 업데이트 후, 급증 청원 리스트 요청
     @Operation(summary = "동의자 수 급증 청원 데이터 조회", description = "동의자 수가 크게 증가한 순으로 청원을 정렬하여 조회합니다.")
     @GetMapping("/increased")
-    fun getIncreasedPetitions(): List<IncreasedPetitionResponse> = agreeCountMonitoringService.increasedAgreeCountList()
+    fun getIncreasedPetitions(): ResponseEntity<ApiResponse<List<IncreasedPetitionResponse>>> =
+        ResponseEntity.ok(ApiResponse.success(agreeCountMonitoringService.increasedAgreeCountList()))
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "나이 기준 관심 청원 조회", description = "사용자의 나이와 비슷한 이용자의 관심 청원을 조회합니다.")

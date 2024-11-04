@@ -1,10 +1,13 @@
-package com.example.echo.domain.member.controller.advice
+package com.example.echo.global.advice
 
 import com.example.echo.global.api.ApiResponse
 import com.example.echo.global.exception.ErrorCode
+import com.example.echo.global.exception.PetitionCustomException
 import com.example.echo.global.exception.UploadCustomException
-import org.slf4j.LoggerFactory
+import com.example.echo.log
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.multipart.MaxUploadSizeExceededException
@@ -12,8 +15,15 @@ import org.springframework.web.multipart.MultipartException
 import java.io.IOException
 
 @RestControllerAdvice
-class FileControllerAdvice {
-    private val log = LoggerFactory.getLogger(this::class.java)
+class GlobalControllerAdvice {
+
+    @ExceptionHandler(PetitionCustomException::class)
+    fun handlePetitionCustomException(e: PetitionCustomException): ResponseEntity<ApiResponse<Nothing>> {
+        log.error("국민동의청원 서비스 에러 발생: ${e.message}", e)
+        return ResponseEntity
+            .status(e.errorCode.httpStatus)
+            .body(ApiResponse.error(e.errorCode.message))
+    }
 
     @ExceptionHandler(UploadCustomException::class)
     fun handleUploadException(e: UploadCustomException): ResponseEntity<ApiResponse<Nothing>> {
@@ -49,17 +59,25 @@ class FileControllerAdvice {
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<ApiResponse<Nothing>> {
-        log.error("잘못된 파일 형식: ${e.message}", e)
+        log.error("잘못된 입력값: ${e.message}", e)
         return ResponseEntity
-            .status(ErrorCode.INVALID_FILE_FORMAT.httpStatus)
-            .body(ApiResponse.error(ErrorCode.INVALID_FILE_FORMAT.message))
+            .status(ErrorCode.INVALID_ARGUMENT.httpStatus)
+            .body(ApiResponse.error(ErrorCode.INVALID_ARGUMENT.message))
+    }
+
+  @ExceptionHandler(AuthorizationDeniedException::class)
+    fun handleAuthorizationDeniedException(e: AuthorizationDeniedException): ResponseEntity<ApiResponse<Nothing>> {
+        log.error("회원 권한 접근 제한: ${e.message}", e)
+        return ResponseEntity
+            .status(ErrorCode.ACCESS_DENIED.httpStatus)
+            .body(ApiResponse.error(ErrorCode.ACCESS_DENIED.message))
     }
 
     @ExceptionHandler(Exception::class)
     fun handleUnexpectedException(e: Exception): ResponseEntity<ApiResponse<Nothing>> {
-        log.error("예상치 못한 파일 처리 에러 발생: ${e.message}", e)
+        log.error("예상치 못한 에러 발생: ${e.message}", e)
         return ResponseEntity
-            .status(ErrorCode.FILE_UPLOAD_FAILED.httpStatus)
-            .body(ApiResponse.error("파일 처리 중 오류가 발생했습니다."))
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiResponse.error("예상치 못한 에러로 서버 오류가 발생했습니다."))
     }
 }
