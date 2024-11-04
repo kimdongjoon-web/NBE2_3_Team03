@@ -39,12 +39,13 @@ class AgeGroupInterestCountService(
 
         val ageGroup = getAgeGroup(member.age)
         val count = ageGroupInterestCountRepository.findByAgeGroupAndPetitionId(ageGroup, petitionId)
+
         if (count != null) {
-            count.interestCount += 1
+            count.interestCount = petition.interestCount
             ageGroupInterestCountRepository.save(count)
-        } else { // 기존에 없으면 새로 만들고 count 1 지정
-            val newCount = AgeGroupInterestCount(ageGroup = ageGroup, petition = petition, interestCount = 1)
-            ageGroupInterestCountRepository.save(newCount)
+        } else {
+            val newCount = AgeGroupInterestCount(ageGroup = ageGroup, petition = petition, interestCount = petition.interestCount)
+            ageGroupInterestCountRepository.save(newCount) // 청원의 관심 수 가져와서 저장
         }
     }
 
@@ -60,7 +61,7 @@ class AgeGroupInterestCountService(
         val ageGroup = getAgeGroup(member.age)
         val count = ageGroupInterestCountRepository.findByAgeGroupAndPetitionId(ageGroup, petitionId)
         if (count != null) {
-            count.interestCount -= 1
+            count.interestCount = petition.interestCount
             ageGroupInterestCountRepository.save(count)
         } else {
             throw PetitionCustomException(ErrorCode.PETITION_NOT_FOUND)
