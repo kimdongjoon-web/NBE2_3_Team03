@@ -25,7 +25,8 @@ import java.util.stream.Collectors
 class PetitionService (
     private val petitionRepository: PetitionRepository,
     private val memberRepository: MemberRepository,
-    private val summarizationService: SummarizationService
+    private val summarizationService: SummarizationService,
+    private val ageGroupInterestCountService: AgeGroupInterestCountService
 ){
     // 청원 등록
     @Transactional
@@ -178,6 +179,7 @@ class PetitionService (
             petition.interestCount += 1
             member.interestList.add(interestRequestDTO.petitionId)
 
+            ageGroupInterestCountService.addAgeGroupInterestCount(member.memberId!!, petition.petitionId!!)
             petitionRepository.save(petition)
             memberRepository.save(member)
         }
@@ -194,6 +196,7 @@ class PetitionService (
             petition.interestCount -= 1
             member.interestList.remove(interestRequestDTO.petitionId)
 
+            ageGroupInterestCountService.removeAgeGroupInterestCount(member.memberId!!, petition.petitionId!!)
             petitionRepository.save(petition)
             memberRepository.save(member)
         }
