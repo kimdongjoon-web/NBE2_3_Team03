@@ -161,7 +161,7 @@ class PetitionServiceUnitTests {
     @Test
     @DisplayName("청원 좋아요 순 5개 조회 - 첫 번째 청원의 좋아요 수가 마지막 청원의 좋아오 수보다 4 커야 함")
     fun likesCountPetitionsTest() {
-        val petitions = petitionService.likesCountPetitions
+        val petitions = petitionService.getLikesCountPetitions()
 
         assertEquals(5, petitions.size)
 

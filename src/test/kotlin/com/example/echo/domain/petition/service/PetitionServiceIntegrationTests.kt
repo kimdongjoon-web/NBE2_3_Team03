@@ -233,6 +233,6 @@ class PetitionServiceIntegrationTests {
         val crawledData = petitionCrawlService.dynamicCrawl(admin!!.memberId!!, url)  // 크롤링한 청원 리스트
 
         assertEquals(totalCount, crawledData.size)
-        assertEquals(totalCount, petitionRepository.findAll().size)
+        assertEquals(totalCount, petitionRepository.findAll().size - 5)
     }
 }

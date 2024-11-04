@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.io.Serializable
 import java.time.LocalDateTime
 
-class PetitionResponseDto (petition: Petition) : Serializable{
+class IncreasedPetitionResponse(petition: Petition) : Serializable {
     @Schema(description = "청원의 ID", example = "1")
     var petitionId: Long? = null
 
@@ -31,7 +31,10 @@ class PetitionResponseDto (petition: Petition) : Serializable{
     @Schema(description = "동의 수", example = "20527")
     var agreeCount: Int? = null
 
-    init{
+    @Schema(description = "이전 동의 수", example = "20000") // 추가된 필드
+    var previousAgreeCount: Int = 0 // 기본값 0
+
+    init {
         this.petitionId = petition.petitionId
         this.title = petition.title
         this.startDate = petition.startDate
@@ -40,9 +43,10 @@ class PetitionResponseDto (petition: Petition) : Serializable{
         this.likesCount = petition.likesCount
         this.interestCount = petition.interestCount
         this.agreeCount = petition.agreeCount
+        this.previousAgreeCount = petition.previousAgreeCount // 이전 동의자 수 추가
     }
 
     companion object {
-        private const val serialVersionUID = 1L  // serialVersionUID 추가
+        private const val serialVersionUID = 1L // serialVersionUID 추가
     }
 }

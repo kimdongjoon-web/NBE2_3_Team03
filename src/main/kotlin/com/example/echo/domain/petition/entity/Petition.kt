@@ -51,6 +51,9 @@ class Petition(
     @Column(name = "agree_count") // 청원 객체 생성 시점엔 동의자수 크롤링 데이터를 받아오지 않아 nullable = true 설정
     var agreeCount: Int? = null,
 
+    @Column(name = "previous_agree_count")
+    var previousAgreeCount: Int = 0,
+
     @ElementCollection
     var likedMemberIds: MutableSet<Long> = mutableSetOf(),
 
