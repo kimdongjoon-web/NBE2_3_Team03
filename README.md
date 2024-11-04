@@ -69,7 +69,7 @@
 
 ## 🧾**개발 기간**
 
-2024/09/23 ~ 2024/10/10
+2024/10/29 ~ 2024/11/06
 
 <br>
 
@@ -88,15 +88,15 @@
 
 ## 🛠 개발 환경
 
-| **구성 요소**      | **설명**                                                |
-|----------------|-------------------------------------------------------|
-| **JDK**        | Java 17                                               |
-| **프레임워크**      | Spring Boot 2.x.x                                     |
-| **DB**         | MySQL                                                 |
-| **빌드 도구**      | Gradle                                                |
-| **IDE**        | IntelliJ IDEA                                         |
-| **기술 및 라이브러리** | Lombok, JWT, React, Spring Security, Chatgpt API, JPA |
-| **협업 도구**      | Notion, GitHub, Slack                                 |
+| **구성 요소**      | **설명**                                               |
+|----------------|------------------------------------------------------|
+| **JDK**        | Java 17                                              |
+| **프레임워크**      | Spring Boot 3.3.5                                    |
+| **DB**         | MySQL                                                |
+| **빌드 도구**      | Gradle                                               |
+| **IDE**        | IntelliJ IDEA                                        |
+| **기술 및 라이브러리** | Redis, JWT, React, Spring Security, Chatgpt API, JPA |
+| **협업 도구**      | Notion, GitHub, Slack                                |
 
 <br>
 
@@ -177,6 +177,12 @@
   <summary>📦 ERD 구조 </summary>
 <img alt="echo_ERD" src="https://github.com/user-attachments/assets/85a72517-dcfb-4f94-a96d-c5bf90a65072">
 </details>
+
+<br>
+
+## 💻시스템 아키텍처
+![3차프로젝트_4](https://github.com/user-attachments/assets/33187b23-1d2f-43c2-9e6e-f483b03725d6)
+<br>
 
 <br>
 
