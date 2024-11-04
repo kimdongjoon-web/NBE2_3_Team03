@@ -1,5 +1,6 @@
 package com.example.echo.domain.petition.service
 
+import com.example.echo.domain.member.entity.Member
 import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.domain.petition.dto.response.AgeGroupInterestCountResponse
 import com.example.echo.domain.petition.entity.AgeGroupInterestCount
@@ -7,6 +8,7 @@ import com.example.echo.domain.petition.repository.AgeGroupInterestCountReposito
 import com.example.echo.domain.petition.repository.PetitionRepository
 import com.example.echo.global.exception.ErrorCode
 import com.example.echo.global.exception.PetitionCustomException
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,11 +21,10 @@ class AgeGroupInterestCountService(
 
     // 나이대 별 관심목록 수 많은 청원 5개 추천
     @Transactional
-    fun getTopPetitionsByAgeGroup(memberId: Long): List<AgeGroupInterestCountResponse> {
-        val member = memberRepository.findById(memberId).orElseThrow {
-            PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+    fun getTopPetitionsByAgeGroup(member: Member): List<AgeGroupInterestCountResponse> {
         val memberAgeGroup: String = getAgeGroup(member.age)
-        val topPetitions = ageGroupInterestCountRepository.findTopPetitionsByAgeGroup(memberAgeGroup)
+        val pageable = PageRequest.of(0, 5)
+        val topPetitions = ageGroupInterestCountRepository.findTopPetitionsByAgeGroup(memberAgeGroup, pageable)
         return topPetitions.map{AgeGroupInterestCountResponse.fromEntity(it)}
     }
 
@@ -41,11 +42,10 @@ class AgeGroupInterestCountService(
         if (count != null) {
             count.interestCount += 1
             ageGroupInterestCountRepository.save(count)
+        } else { // 기존에 없으면 새로 만들고 count 1 지정
+            val newCount = AgeGroupInterestCount(ageGroup = ageGroup, petition = petition, interestCount = 1)
+            ageGroupInterestCountRepository.save(newCount)
         }
-        // 기존에 없으면 새로 만들고 count 1 지정
-        val newCount = AgeGroupInterestCount(ageGroup = ageGroup, petition = petition, interestCount = 1)
-        ageGroupInterestCountRepository.save(newCount)
-
     }
 
     // 해당 청원, 나이대 -1
