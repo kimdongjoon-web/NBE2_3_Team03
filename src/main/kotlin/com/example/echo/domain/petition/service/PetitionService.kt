@@ -189,9 +189,9 @@ class PetitionService (
             petition.interestCount += 1
             member.interestList.add(interestRequestDTO.petitionId)
 
-            ageGroupInterestCountService.addAgeGroupInterestCount(member.memberId!!, petition.petitionId!!)
             petitionRepository.save(petition)
             memberRepository.save(member)
+            ageGroupInterestCountService.addAgeGroupInterestCount(member.memberId!!, petition.petitionId!!)
         }
     }
     // 관심목록 제거 & count-1
@@ -206,9 +206,9 @@ class PetitionService (
             petition.interestCount -= 1
             member.interestList.remove(interestRequestDTO.petitionId)
 
-            ageGroupInterestCountService.removeAgeGroupInterestCount(member.memberId!!, petition.petitionId!!)
             petitionRepository.save(petition)
             memberRepository.save(member)
+            ageGroupInterestCountService.removeAgeGroupInterestCount(member.memberId!!, petition.petitionId!!)
         }
     }
 
