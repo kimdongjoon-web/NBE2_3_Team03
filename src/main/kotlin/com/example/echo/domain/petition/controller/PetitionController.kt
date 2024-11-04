@@ -3,17 +3,19 @@ package com.example.echo.domain.petition.controller
 import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.domain.petition.dto.request.InterestRequestDTO
 import com.example.echo.domain.petition.dto.request.PetitionRequestDto
+import com.example.echo.domain.petition.dto.response.AgeGroupInterestCountResponse
 import com.example.echo.domain.petition.dto.response.IncreasedPetitionResponse
 import com.example.echo.domain.petition.dto.response.InterestPetitionResponseDTO
 import com.example.echo.domain.petition.dto.response.PetitionDetailResponseDto
 import com.example.echo.domain.petition.dto.response.PetitionResponseDto
 import com.example.echo.domain.petition.entity.Category
+import com.example.echo.domain.petition.service.AgeGroupInterestCountService
 import com.example.echo.domain.petition.service.AgreeCountMonitoringService
 import com.example.echo.domain.petition.service.PetitionService
 import com.example.echo.global.api.ApiResponse
+import com.example.echo.global.security.auth.CustomUserPrincipal
 import com.example.echo.global.exception.ErrorCode
 import com.example.echo.global.exception.PetitionCustomException
-import com.example.echo.global.security.auth.CustomUserPrincipal
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -29,10 +31,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/petitions")
 @Tag(name = "Petition Controller", description = "청원 관리 API")
-class PetitionController(
+class PetitionController (
     private val petitionService: PetitionService,
     private val memberRepository: MemberRepository,
-    private val agreeCountMonitoringService: AgreeCountMonitoringService
+    private val agreeCountMonitoringService: AgreeCountMonitoringService,
+    private val ageGroupInterestCountService: AgeGroupInterestCountService
 ) {
     // 청원 등록
     @Operation(summary = "청원 등록", description = "새로운 청원을 등록합니다.")
@@ -223,4 +226,25 @@ class PetitionController(
     @Operation(summary = "동의자 수 급증 청원 데이터 조회", description = "동의자 수가 크게 증가한 순으로 청원을 정렬하여 조회합니다.")
     @GetMapping("/increased")
     fun getIncreasedPetitions(): List<IncreasedPetitionResponse> = agreeCountMonitoringService.increasedAgreeCountList()
+
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "나이 기준 관심 청원 조회", description = "사용자의 나이와 비슷한 이용자의 관심 청원을 조회합니다.")
+    @GetMapping("/age")
+    fun getPetitionsByAge(
+        @Parameter(
+            description = "현재 인증된 사용자 정보", required = true)
+        @AuthenticationPrincipal principal: CustomUserPrincipal
+    ): ResponseEntity<ApiResponse<List<AgeGroupInterestCountResponse>>> {
+        val member = memberRepository.findById(principal.memberId)
+            .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+
+        return try {
+            // 회원의 관심 목록 조회
+            val interestPetitions = ageGroupInterestCountService.getTopPetitionsByAgeGroup(member)
+            ResponseEntity.ok(ApiResponse.success(interestPetitions))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest()
+                .body(error("나이 기준 조회 중 오류가 발생했습니다: ${e.message}"))
+        }
+    }
 }
