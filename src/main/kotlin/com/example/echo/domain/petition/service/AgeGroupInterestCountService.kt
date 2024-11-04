@@ -41,7 +41,7 @@ class AgeGroupInterestCountService(
         val count = ageGroupInterestCountRepository.findByAgeGroupAndPetitionId(ageGroup, petitionId)
 
         if (count != null) {
-            count.interestCount += petition.interestCount
+            count.interestCount = petition.interestCount
             ageGroupInterestCountRepository.save(count)
         } else {
             val newCount = AgeGroupInterestCount(ageGroup = ageGroup, petition = petition, interestCount = petition.interestCount)
