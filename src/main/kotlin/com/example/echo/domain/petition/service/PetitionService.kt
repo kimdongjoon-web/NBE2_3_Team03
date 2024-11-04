@@ -12,6 +12,7 @@ import com.example.echo.domain.petition.entity.Petition
 import com.example.echo.domain.petition.repository.PetitionRepository
 import com.example.echo.global.exception.ErrorCode
 import com.example.echo.global.exception.PetitionCustomException
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -77,6 +78,11 @@ class PetitionService (
 
 
     // 진행 중인 청원 전체 조회
+    @Cacheable(
+        cacheNames = arrayOf("ongoingPetitions"),
+        // petitions 테이블의 페이지 번호와 사이즈를 Redis의 key로 사용
+        key = "'petitions:page:' + #pageable.pageNumber + ':size:' + #pageable.pageSize"
+    )
     fun getOngoingPetitions(pageable: Pageable): Page<PetitionResponseDto> {
         return petitionRepository.findAllOngoing(pageable).map { PetitionResponseDto(it)}
     }
@@ -94,11 +100,15 @@ class PetitionService (
             return petitionRepository.getEndDatePetitions(pageable)
         }
 
-    val likesCountPetitions: List<PetitionResponseDto>
-        get() {
-            val pageable: Pageable = PageRequest.of(0, 5)
-            return petitionRepository.getLikesCountPetitions(pageable)
-        }
+    // 청원 동의자 순 5개 조회
+    @Cacheable(
+        cacheNames = arrayOf("topLikedPetitions"),
+        key = "'petitions:likes'"
+    )
+    fun getLikesCountPetitions(): List<PetitionResponseDto> {
+        val pageable: Pageable = PageRequest.of(0, 5)
+        return petitionRepository.getLikesCountPetitions(pageable)
+    }
 
     // 좋아요 기능
     @Transactional
