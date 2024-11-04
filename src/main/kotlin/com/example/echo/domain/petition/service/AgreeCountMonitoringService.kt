@@ -25,7 +25,7 @@ class AgreeCountMonitoringService(
                     log.info("웹의 동의자 수: $currentAgreeCount, 기존 동의 수: ${petition.agreeCount}")
                     petition.agreeCount = currentAgreeCount
                     petitionRepository.save(petition)
-                    log.info("동의 수 업데이터 성공 청원: ${petition.petitionId}")
+                    log.info("동의 수 업데이트 성공 청원: ${petition.petitionId}")
                 } else if (currentAgreeCount < petition.agreeCount!!) {
                     log.info("동의 수 업데이트 실패")
                 } else {

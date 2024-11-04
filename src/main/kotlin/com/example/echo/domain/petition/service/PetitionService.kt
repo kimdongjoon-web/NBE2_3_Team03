@@ -1,7 +1,10 @@
 package com.example.echo.domain.petition.service
 
+import com.example.echo.domain.member.entity.Member
 import com.example.echo.domain.member.repository.MemberRepository
+import com.example.echo.domain.petition.dto.request.InterestRequestDTO
 import com.example.echo.domain.petition.dto.request.PetitionRequestDto
+import com.example.echo.domain.petition.dto.response.InterestPetitionResponseDTO
 import com.example.echo.domain.petition.dto.response.PetitionDetailResponseDto
 import com.example.echo.domain.petition.dto.response.PetitionResponseDto
 import com.example.echo.domain.petition.entity.Category
@@ -12,6 +15,7 @@ import com.example.echo.global.exception.PetitionCustomException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -91,7 +95,6 @@ class PetitionService (
         }
 
     val likesCountPetitions: List<PetitionResponseDto>
-        // 청원 동의자 순 5개 조회
         get() {
             val pageable: Pageable = PageRequest.of(0, 5)
             return petitionRepository.getLikesCountPetitions(pageable)
@@ -161,6 +164,55 @@ class PetitionService (
         // 청원 만료일 오후 3시 일 경우 만료 전이나 이미 만료됐다고 판단
         // 만료일 + 1 을 기준으로 체크
         return petition.endDate!!.plusDays(1).isBefore(LocalDateTime.now()) // 만료일이 지난 경우 true
+    }
+
+    // 관심목록 추가 & count+1
+    @Transactional
+    fun addInterest(interestRequestDTO: InterestRequestDTO) {
+        val petition = petitionRepository.findById(interestRequestDTO.petitionId)
+            .orElseThrow { PetitionCustomException(ErrorCode.PETITION_NOT_FOUND) }
+        val member = memberRepository.findById(interestRequestDTO.memberId)
+            .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+
+        if (!member.interestList.contains(interestRequestDTO.petitionId)) {
+            petition.interestCount += 1
+            member.interestList.add(interestRequestDTO.petitionId)
+
+            petitionRepository.save(petition)
+            memberRepository.save(member)
+        }
+    }
+    // 관심목록 제거 & count-1
+    @Transactional
+    fun removeInterest(interestRequestDTO: InterestRequestDTO) {
+        val petition = petitionRepository.findById(interestRequestDTO.petitionId)
+            .orElseThrow { PetitionCustomException(ErrorCode.PETITION_NOT_FOUND) }
+        val member = memberRepository.findById(interestRequestDTO.memberId)
+            .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+
+        if (member.interestList.contains(interestRequestDTO.petitionId)) {
+            petition.interestCount -= 1
+            member.interestList.remove(interestRequestDTO.petitionId)
+
+            petitionRepository.save(petition)
+            memberRepository.save(member)
+        }
+    }
+
+    //관심 목록 조회
+    @Transactional(readOnly = true)
+    fun getInterestList(member: Member): List<InterestPetitionResponseDTO> {
+        return member.interestList.map { petitionId ->
+            val petition = petitionRepository.findById(petitionId)
+                .orElseThrow { PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND) }
+            InterestPetitionResponseDTO(petition)
+        }
+    }
+
+    @Transactional(readOnly = true)
+    fun getPetitionsByInterestCount(): List<InterestPetitionResponseDTO> {
+        val petitions = petitionRepository.findAll(Sort.by(Sort.Direction.DESC, "interestCount"))
+        return petitions.map { InterestPetitionResponseDTO(it) }
     }
 
     // 제목으로 청원 검색
