@@ -184,6 +184,40 @@
 ![3차프로젝트_8](https://github.com/user-attachments/assets/efedc8f2-48ef-4918-aed9-50a744a09bab)
 <br>
 
+## 📝시퀀스 다이어그램
+### 1. 청원 등록
+![1청원 등록](https://github.com/user-attachments/assets/42dd00c4-3f40-4ced-ab98-7803fb42a5d5)
+### 2. 청원 단건 조회
+![2청원 단건 조회](https://github.com/user-attachments/assets/5ce1ae52-a28a-404c-bf3a-0386696a7b15)
+### 3. 청원 전체 목록 조회
+![3청원 전체 목록 조회](https://github.com/user-attachments/assets/505d1dfa-a41f-45fd-ad2c-bd06dd5aa20a)
+### 4. 청원 좋아요 순 조회
+![4청원 좋아요 순 조회](https://github.com/user-attachments/assets/420696bb-e62a-4c9e-9b08-0c701b0767fb)
+### 5. 청원 관심목록 수 기준 조회
+![5청원 관심목록 수 기준 조회](https://github.com/user-attachments/assets/157dba74-c263-4cdc-b9c5-705281b24d0e)
+### 6. 청원 카테고리별 조회
+![6청원 카테고리별 조회](https://github.com/user-attachments/assets/66d73e46-2cfd-4085-8454-56a71f30cd26)
+### 7. 청원 만료일 순 조회
+![7청원 만료일 순 조회](https://github.com/user-attachments/assets/973f7134-20df-46c7-b69d-2d266dc3bba4)
+### 8. 동의자 수 급증 청원 조회
+![8동의자 수 급증 청원 조회](https://github.com/user-attachments/assets/09ef4283-0632-4d85-a170-6e6d31b24208)
+### 9. 나이대별 청원 추천 조회
+![9나이대별 청원 추천 조회](https://github.com/user-attachments/assets/cbf0e4f0-5df6-4e5e-8caa-d9ee3f77435c)
+### 10. 제목으로 청원 검색
+![10제목으로 청원 검색](https://github.com/user-attachments/assets/02bbb374-f6a1-410d-bf51-a91b1beef224)
+### 11. 청원 좋아요 기능
+![11청원 좋아요 기능](https://github.com/user-attachments/assets/cb610bf2-ad00-4038-b2ec-64507d0c1bc8)
+### 12. 청원 관심 목록 추가
+![12청원 관심 목록 추가](https://github.com/user-attachments/assets/1f47bbc5-a93b-464e-a92b-640bd1c56605)
+### 13. 청원 관심 목록 제거
+![13청원 관심 목록 제거](https://github.com/user-attachments/assets/2de6a26e-6448-4d15-97ae-284dbd3e3f36)
+### 14. 본인의 관심 목록 조회
+![14본인의 관심 목록 조회](https://github.com/user-attachments/assets/dd870114-795a-4ba0-8850-bc4ddb71ad40)
+### 15. 청원 수정
+![15청원 수정](https://github.com/user-attachments/assets/5daf73d7-09f9-4199-8993-6d67dc3f5ebf)
+### 16. 청원 삭제
+![16 청원 삭제](https://github.com/user-attachments/assets/6b62feb2-6aee-4776-b848-9573dc235256)
+
 <br>
 
 ## 🎞API 명세서
