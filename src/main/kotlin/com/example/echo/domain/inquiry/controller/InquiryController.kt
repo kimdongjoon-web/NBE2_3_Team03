@@ -104,4 +104,16 @@ class InquiryController(
         inquiryService.addAnswer(inquiryId, inquiryRequest.replyContent)
         return ResponseEntity.ok(ApiResponse.success(null))
     }
+
+    @Operation(summary = "관리자 답변 삭제", description = "관리자가 1:1 문의에 답변을 삭제합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{inquiryId}/answer")
+    fun deleteAnswer(
+        @Parameter(description = "답변을 삭제할 문의 ID", required = true)
+        @PathVariable inquiryId: Long
+    ): ResponseEntity<ApiResponse<Void?>> {
+        inquiryService.deleteAnswer(inquiryId)
+        return ResponseEntity.ok(ApiResponse.success(null))
+    }
+
 }

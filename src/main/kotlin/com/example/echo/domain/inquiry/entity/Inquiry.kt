@@ -52,6 +52,12 @@ class Inquiry (
         this.repliedDate = LocalDateTime.now()
     }
 
+    fun deleteReplyContent() {
+        this.replyContent = null
+        this.inquiryStatus = InquiryStatus.PENDING
+        this.repliedDate = null
+    }
+
     override fun toString(): String {
         return "Inquiry(inquiryId=$inquiryId, member=${member.memberId}, inquiryCategory=$inquiryCategory," +
                 "inquiryTitle=$inquiryTitle, inquiryContent=$inquiryContent,createdDate=$createdDate," +
