@@ -82,7 +82,8 @@
 - 청원 관련 뉴스 제공
 - 청원 동의 수 및 관심도에 따른 추천
 - 청원 좋아요 수에 따른 추천
-- ...
+- 나이대별 관심청원 순위 제공
+- 
 
 <br>
 
@@ -90,12 +91,12 @@
 
 | **구성 요소**      | **설명**                                               |
 |----------------|------------------------------------------------------|
-| **JDK**        | Java 17                                              |
+| **JDK**        | Kotlin                                             |
 | **프레임워크**      | Spring Boot 3.3.5                                    |
-| **DB**         | MySQL                                                |
+| **DB**         | MySQL , H2                                         |
 | **빌드 도구**      | Gradle                                               |
 | **IDE**        | IntelliJ IDEA                                        |
-| **기술 및 라이브러리** | Redis, JWT, React, Spring Security, Chatgpt API, JPA |
+| **기술 및 라이브러리** | Redis, JWT, Spring Security, Chatgpt API, JPA, Naver API|
 | **협업 도구**      | Notion, GitHub, Slack                                |
 
 <br>
@@ -106,7 +107,7 @@
   <summary>📦 패키지 구조 </summary>
 📦src
  ┣ main<br/>
- ┃ ┣ java<br/>
+ ┃ ┣ kotlin<br/>
  ┃ ┃ ┗ com<br/>
  ┃ ┃ ┃ ┗ example<br/>
  ┃ ┃ ┃ ┃ ┗ echo<br/>
@@ -139,6 +140,7 @@
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ entity<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ repository<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ service<br/>
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ util<br/>
  ┃ ┃ ┃ ┃ ┃ ┣ global<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ advice<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ api<br/>
@@ -149,17 +151,11 @@
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ filter<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ util<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ util<br/>
- ┃ ┣ react<br/>
- ┃ ┃ ┣ public<br/>
- ┃ ┃ ┣ src<br/>
- ┃ ┃ ┃ ┣ assets<br/>
- ┃ ┃ ┃ ┣ components<br/>
- ┃ ┃ ┃ ┣ css<br/>
  ┃ ┗ resources<br/>
  ┃ ┃ ┣ static<br/>
  ┃ ┃ ┃ ┗ images<br/>
  ┗ test<br/>
- ┃ ┗ java<br/>
+ ┃ ┗ kotlin<br/>
  ┃ ┃ ┗ com<br/>
  ┃ ┃ ┃ ┗ example<br/>
  ┃ ┃ ┃ ┃ ┗ echo<br/>
@@ -173,9 +169,15 @@
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ petition<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ service<br/>
 </details>
+
 <details>
   <summary>📦 ERD - Kotlin </summary>
 <img alt="echo_ERD" src="https://github.com/user-attachments/assets/124f11c0-44fa-434d-b39f-2f2d77233508">
+</details>
+
+<details>
+  <summary>📦클래스 다이어그램</summary>
+<img alt="스크린샷 2024-11-05 오후 2 11 02" src="https://github.com/user-attachments/assets/59d4e937-42b6-41f9-9227-389f2e38d933">
 </details>
 
 <br>
@@ -184,8 +186,3 @@
 ![3차프로젝트_8](https://github.com/user-attachments/assets/efedc8f2-48ef-4918-aed9-50a744a09bab)
 <br>
 
-<br>
-
-## 🎞API 명세서
-
-<br>
