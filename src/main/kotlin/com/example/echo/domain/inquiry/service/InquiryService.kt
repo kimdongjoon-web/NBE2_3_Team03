@@ -1,5 +1,6 @@
 package com.example.echo.domain.inquiry.service
 
+import com.example.echo.domain.inquiry.dto.request.AdminAnswerRequest
 import com.example.echo.domain.inquiry.dto.request.InquiryCreateRequest
 import com.example.echo.domain.inquiry.dto.request.InquiryPageRequest
 import com.example.echo.domain.inquiry.dto.request.InquiryUpdateRequest
@@ -73,6 +74,14 @@ class InquiryService(
     fun addAnswer(inquiryId: Long?, replyContent: String?) {
         val inquiry = findInquiryById(inquiryId!!)
         inquiry.changeReplyContent(replyContent)
+        inquiryRepository.save(inquiry)
+    }
+
+    // ADMIN 1:1 문의 답변 삭제
+    @Transactional
+    fun deleteAnswer(inquiryId: Long?) {
+        val inquiry = findInquiryById(inquiryId!!)
+        inquiry.deleteReplyContent()
         inquiryRepository.save(inquiry)
     }
 
