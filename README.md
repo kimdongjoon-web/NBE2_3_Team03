@@ -219,6 +219,11 @@
 16. 청원 삭제
 <img alt="16 청원 삭제" src="https://github.com/user-attachments/assets/6b62feb2-6aee-4776-b848-9573dc235256">
 </details>
+<details>
+  <summary>📦유스 케이스 다이어그램</summary>
+문의, 뉴스
+<img alt="문의뉴스UseCaseDiagram" src="https://github.com/user-attachments/assets/ee5ecd85-50ec-496d-850b-ae1733706fd0">
+</details>
 <br>
 
 ## 💻시스템 아키텍처
