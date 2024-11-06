@@ -48,6 +48,7 @@ class PetitionServiceIntegrationTests {
         admin = Member(
             userId = "admin",
             name = "김철수",
+            age = 25,
             email = "admin@example.com",
             password = "1111",
             phone = "010-1111-1111",

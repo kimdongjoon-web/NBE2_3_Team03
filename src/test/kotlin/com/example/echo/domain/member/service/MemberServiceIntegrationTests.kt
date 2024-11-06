@@ -10,6 +10,7 @@ import com.example.echo.domain.member.repository.MemberRepository
 import com.example.echo.global.exception.ErrorCode
 import com.example.echo.global.exception.PetitionCustomException
 import com.example.echo.global.security.util.JWTUtil
+import com.example.echo.log
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -53,6 +54,7 @@ class MemberServiceIntegrationTests {
         admin = Member(
             userId = "admin",
             name = "김철수",
+            age = 25,
             email = "admin@example.com",
             password = passwordEncoder.encode("1111"),
             phone = "010-1111-1111",
@@ -65,6 +67,7 @@ class MemberServiceIntegrationTests {
         user = Member(
             userId = "user",
             name = "홍길동",
+            age = 44,
             email = "user@example.com",
             password = passwordEncoder.encode("1111"),
             phone = "010-2222-2222",
@@ -95,6 +98,7 @@ class MemberServiceIntegrationTests {
         val request = MemberCreateRequest(
             userId = "newUser",
             name = "이영희",
+            age =  22,
             email = "newUser@example.com",
             password = "1111",
             phone = "010-3333-3333",
@@ -106,6 +110,7 @@ class MemberServiceIntegrationTests {
             ?: throw PetitionCustomException(ErrorCode.MEMBER_NOT_FOUND)
 
         assertEquals(response.memberId, savedMember.memberId)
+        assertEquals(response.age, savedMember.age)
         assertEquals(response.name, savedMember.name)
     }
 
