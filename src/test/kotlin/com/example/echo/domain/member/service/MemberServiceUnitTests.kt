@@ -47,6 +47,7 @@ class MemberServiceUnitTests {
         admin = Member(
             userId = "admin",
             name = "김철수",
+            age = 25,
             email = "admin@example.com",
             password = passwordEncoder.encode("1111"),
             phone = "010-1111-1111",
@@ -58,6 +59,7 @@ class MemberServiceUnitTests {
         user = Member(
             userId = "user",
             name = "홍길동",
+            age = 44,
             email = "user@example.com",
             password = passwordEncoder.encode("1111"),
             phone = "010-2222-2222",

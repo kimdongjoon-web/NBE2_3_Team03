@@ -14,6 +14,9 @@ data class MemberResponse (
     @field:Schema(description = "회원 이름", example = "홍길동")
     val name: String = "",
 
+    @field:Schema(description = "회원 나이", example = "25")
+    val age: Int = 0,
+
     @field:Schema(description = "회원 이메일", example = "user1@example.com")
     val email: String = "",
 
