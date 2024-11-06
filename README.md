@@ -226,6 +226,10 @@
 회원, 청원
 <img alt="회원청원UseCaseDiagram" src="https://github.com/user-attachments/assets/cde00bec-224d-4c62-835a-d115b3178beb">
 </details>
+<details>
+  <summary>📦플로우차트</summary>
+<img alt="Flow Chart" src="https://github.com/user-attachments/assets/26c00076-417a-43ea-a396-a84616bb1350">
+</details>
 <br>
 
 ## 💻시스템 아키텍처
