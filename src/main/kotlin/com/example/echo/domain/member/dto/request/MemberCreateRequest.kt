@@ -16,6 +16,10 @@ data class MemberCreateRequest(
     @field:NotBlank(message = "이름은 필수 항목입니다.")
     val name: String,
 
+    @field:Schema(description = "사용자 나이", example = "25")
+    @field:NotBlank(message = "이름은 필수 항목입니다.")
+    val age: Int,
+
     @field:Schema(description = "사용자 이메일", example = "example@example.com")
     @field:Email(message = "유효한 이메일 주소를 입력하세요.")
     @field:NotBlank(message = "이메일은 필수 항목입니다.")
@@ -39,6 +43,7 @@ data class MemberCreateRequest(
         return Member(
             userId = this.userId,
             name = this.name,
+            age = this.age,
             email = this.email,
             password = this.password,
             phone = this.phone,
