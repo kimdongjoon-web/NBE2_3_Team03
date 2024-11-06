@@ -82,7 +82,8 @@
 - 청원 관련 뉴스 제공
 - 청원 동의 수 및 관심도에 따른 추천
 - 청원 좋아요 수에 따른 추천
-- ...
+- 나이대별 관심 청원 순위 제공
+- 
 
 <br>
 
@@ -90,12 +91,12 @@
 
 | **구성 요소**      | **설명**                                               |
 |----------------|------------------------------------------------------|
-| **JDK**        | Java 17                                              |
+| **JDK**        | Kotlin                                       |
 | **프레임워크**      | Spring Boot 3.3.5                                    |
-| **DB**         | MySQL                                                |
+| **DB**         | MySQL, H2                                               |
 | **빌드 도구**      | Gradle                                               |
 | **IDE**        | IntelliJ IDEA                                        |
-| **기술 및 라이브러리** | Redis, JWT, React, Spring Security, Chatgpt API, JPA |
+| **기술 및 라이브러리** | Redis, JWT, Spring Security, Chatgpt API, JPA, Naver API |
 | **협업 도구**      | Notion, GitHub, Slack                                |
 
 <br>
@@ -106,7 +107,7 @@
   <summary>📦 패키지 구조 </summary>
 📦src
  ┣ main<br/>
- ┃ ┣ java<br/>
+ ┃ ┣ kotlin<br/>
  ┃ ┃ ┗ com<br/>
  ┃ ┃ ┃ ┗ example<br/>
  ┃ ┃ ┃ ┃ ┗ echo<br/>
@@ -138,7 +139,8 @@
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ response<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ entity<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ repository<br/>
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ service<br/>
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ service<br/>
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ util<br/>
  ┃ ┃ ┃ ┃ ┃ ┣ global<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ advice<br/>
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ api<br/>
@@ -159,7 +161,7 @@
  ┃ ┃ ┣ static<br/>
  ┃ ┃ ┃ ┗ images<br/>
  ┗ test<br/>
- ┃ ┗ java<br/>
+ ┃ ┗ kotlin<br/>
  ┃ ┃ ┗ com<br/>
  ┃ ┃ ┃ ┗ example<br/>
  ┃ ┃ ┃ ┃ ┗ echo<br/>
@@ -178,48 +180,48 @@
 <img alt="echo_ERD" src="https://github.com/user-attachments/assets/124f11c0-44fa-434d-b39f-2f2d77233508">
 </details>
 
+<details>
+  <summary>📦클래스 다이어그램</summary>
+<img alt="스크린샷 2024-11-05 오후 2 11 02" src="https://github.com/user-attachments/assets/59d4e937-42b6-41f9-9227-389f2e38d933">
+</details>
+<details>
+ <summary>📦시퀀스 다이어그램</summary>
+1. 청원 등록
+<img alt = "1" src = "https://github.com/user-attachments/assets/42dd00c4-3f40-4ced-ab98-7803fb42a5d5">
+2. 청원 단건 조회
+<img alt = "2청원 단건 조회" src = "https://github.com/user-attachments/assets/5ce1ae52-a28a-404c-bf3a-0386696a7b15">
+3. 청원 전체 목록 조회
+<img alt = "3청원 전체 목록 조회" src="https://github.com/user-attachments/assets/505d1dfa-a41f-45fd-ad2c-bd06dd5aa20a">
+4. 청원 좋아요 순 조회
+<img alt = "4청원 좋아요 순 조회" src="https://github.com/user-attachments/assets/420696bb-e62a-4c9e-9b08-0c701b0767fb">
+5. 청원 관심목록 수 기준 조회
+<img alt = "5청원 관심목록 수 기준 조회" src="https://github.com/user-attachments/assets/157dba74-c263-4cdc-b9c5-705281b24d0e">
+6. 청원 카테고리별 조회
+<img alt ="6청원 카테고리별 조회" src="https://github.com/user-attachments/assets/66d73e46-2cfd-4085-8454-56a71f30cd26">
+7. 청원 만료일 순 조회
+<img alt ="7청원 만료일 순 조회" src ="https://github.com/user-attachments/assets/973f7134-20df-46c7-b69d-2d266dc3bba4">
+8. 동의자 수 급증 청원 조회
+<img alt = "8동의자 수 급증 청원 조회" src="https://github.com/user-attachments/assets/09ef4283-0632-4d85-a170-6e6d31b24208">
+9. 나이대별 청원 추천 조회
+<img alt = "9나이대별 청원 추천 조회" src="https://github.com/user-attachments/assets/cbf0e4f0-5df6-4e5e-8caa-d9ee3f77435c">
+10. 제목으로 청원 검색
+<img alt="10제목으로 청원 검색" src="https://github.com/user-attachments/assets/02bbb374-f6a1-410d-bf51-a91b1beef224">
+11. 청원 좋아요 기능
+<img alt="11청원 좋아요 기능" src="https://github.com/user-attachments/assets/cb610bf2-ad00-4038-b2ec-64507d0c1bc8">
+12. 청원 관심 목록 추가
+<img alt="12청원 관심 목록 추가" src="https://github.com/user-attachments/assets/1f47bbc5-a93b-464e-a92b-640bd1c56605">
+13. 청원 관심 목록 제거
+<img alt="13청원 관심 목록 제거" src="https://github.com/user-attachments/assets/2de6a26e-6448-4d15-97ae-284dbd3e3f36">
+14. 본인의 관심 목록 조회
+<img alt="14본인의 관심 목록 조회" src="https://github.com/user-attachments/assets/dd870114-795a-4ba0-8850-bc4ddb71ad40">
+15. 청원 수정
+<img alt="15청원 수정" src="https://github.com/user-attachments/assets/5daf73d7-09f9-4199-8993-6d67dc3f5ebf">
+16. 청원 삭제
+<img alt="16 청원 삭제" src="https://github.com/user-attachments/assets/6b62feb2-6aee-4776-b848-9573dc235256">
+</details>
 <br>
 
 ## 💻시스템 아키텍처
 ![3차프로젝트_8](https://github.com/user-attachments/assets/efedc8f2-48ef-4918-aed9-50a744a09bab)
 <br>
 
-## 📝시퀀스 다이어그램
-### 1. 청원 등록
-![1청원 등록](https://github.com/user-attachments/assets/42dd00c4-3f40-4ced-ab98-7803fb42a5d5)
-### 2. 청원 단건 조회
-![2청원 단건 조회](https://github.com/user-attachments/assets/5ce1ae52-a28a-404c-bf3a-0386696a7b15)
-### 3. 청원 전체 목록 조회
-![3청원 전체 목록 조회](https://github.com/user-attachments/assets/505d1dfa-a41f-45fd-ad2c-bd06dd5aa20a)
-### 4. 청원 좋아요 순 조회
-![4청원 좋아요 순 조회](https://github.com/user-attachments/assets/420696bb-e62a-4c9e-9b08-0c701b0767fb)
-### 5. 청원 관심목록 수 기준 조회
-![5청원 관심목록 수 기준 조회](https://github.com/user-attachments/assets/157dba74-c263-4cdc-b9c5-705281b24d0e)
-### 6. 청원 카테고리별 조회
-![6청원 카테고리별 조회](https://github.com/user-attachments/assets/66d73e46-2cfd-4085-8454-56a71f30cd26)
-### 7. 청원 만료일 순 조회
-![7청원 만료일 순 조회](https://github.com/user-attachments/assets/973f7134-20df-46c7-b69d-2d266dc3bba4)
-### 8. 동의자 수 급증 청원 조회
-![8동의자 수 급증 청원 조회](https://github.com/user-attachments/assets/09ef4283-0632-4d85-a170-6e6d31b24208)
-### 9. 나이대별 청원 추천 조회
-![9나이대별 청원 추천 조회](https://github.com/user-attachments/assets/cbf0e4f0-5df6-4e5e-8caa-d9ee3f77435c)
-### 10. 제목으로 청원 검색
-![10제목으로 청원 검색](https://github.com/user-attachments/assets/02bbb374-f6a1-410d-bf51-a91b1beef224)
-### 11. 청원 좋아요 기능
-![11청원 좋아요 기능](https://github.com/user-attachments/assets/cb610bf2-ad00-4038-b2ec-64507d0c1bc8)
-### 12. 청원 관심 목록 추가
-![12청원 관심 목록 추가](https://github.com/user-attachments/assets/1f47bbc5-a93b-464e-a92b-640bd1c56605)
-### 13. 청원 관심 목록 제거
-![13청원 관심 목록 제거](https://github.com/user-attachments/assets/2de6a26e-6448-4d15-97ae-284dbd3e3f36)
-### 14. 본인의 관심 목록 조회
-![14본인의 관심 목록 조회](https://github.com/user-attachments/assets/dd870114-795a-4ba0-8850-bc4ddb71ad40)
-### 15. 청원 수정
-![15청원 수정](https://github.com/user-attachments/assets/5daf73d7-09f9-4199-8993-6d67dc3f5ebf)
-### 16. 청원 삭제
-![16 청원 삭제](https://github.com/user-attachments/assets/6b62feb2-6aee-4776-b848-9573dc235256)
-
-<br>
-
-## 🎞API 명세서
-
-<br>
