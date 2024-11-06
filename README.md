@@ -224,6 +224,12 @@
 문의, 뉴스
 <img alt="문의뉴스UseCaseDiagram" src="https://github.com/user-attachments/assets/ee5ecd85-50ec-496d-850b-ae1733706fd0">
 </details>
+
+<details>
+  <summary>📦유스 케이스 다이어그램</summary>
+회원, 청원
+<img alt="회원청원UseCaseDiagram" src="https://github.com/user-attachments/assets/cde00bec-224d-4c62-835a-d115b3178beb">
+</details>
 <br>
 
 ## 💻시스템 아키텍처
