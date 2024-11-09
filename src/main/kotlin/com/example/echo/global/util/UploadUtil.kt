@@ -117,6 +117,12 @@ class UploadUtil {
         val file = File(uploadPath, filename)
         val thumbFile = File(uploadPath, "s_$filename") // 썸네일 파일 이름 생성
 
+        // 원본 파일과 썸네일 파일이 모두 존재하지 않는 경우
+        if (!file.exists() && !thumbFile.exists()) {
+            logger.warn("파일을 찾을 수 없음: $filename")
+            throw UploadCustomException(ErrorCode.FILE_NOT_FOUND)
+        }
+
         try {
             deleteIfExists(file, "파일")
             deleteIfExists(thumbFile, "썸네일")
