@@ -228,7 +228,7 @@
 </details>
 <details>
   <summary>📦플로우차트</summary>
-<img alt="Flow Chart" src="https://github.com/user-attachments/assets/26c00076-417a-43ea-a396-a84616bb1350">
+<img alt="Flow Chart" src="https://github.com/user-attachments/assets/566bd10f-57a2-4e12-bfff-d791842ba730">
 </details>
 <br>
 
